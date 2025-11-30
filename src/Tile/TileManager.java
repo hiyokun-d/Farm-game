@@ -1,6 +1,5 @@
 package Tile;
 
-import Entity.Crops;
 import Screen.GamePanel;
 
 import javax.imageio.ImageIO;
@@ -37,13 +36,13 @@ public class TileManager {
         tiles = new Tile[4500];
         mapTileNum = new int[gp.maxWorldCol][gp.maxWorldRow];
 
-        grassTiles = new Tile[2500];
+        grassTiles = new Tile[1500];
         grassTileNum = new int[gp.maxWorldCol][gp.maxWorldRow];
 
-        waterTiles = new Tile[2500];
+        waterTiles = new Tile[1500];
         waterTileNum = new int[gp.maxWorldCol][gp.maxWorldRow];
 
-        dirtTiles = new Tile[2500];
+        dirtTiles = new Tile[1500];
         dirtTileNum = new int[gp.maxWorldCol][gp.maxWorldRow];
 
         cropsTiles = new Tile[500];
@@ -108,7 +107,7 @@ public class TileManager {
             while ((line = br.readLine()) != null) {
                 String[] numbers = line.split(",");
                 for (int col = 0; col < numbers.length; col++) {
-                    int id = Integer.parseInt(numbers[col]);
+                    int id = Integer.parseInt(numbers[col].trim());
                     if (id < 0) continue;
                     mapArray[col][row] = id;
                     if (mapArray == mapTileNum)
@@ -153,27 +152,6 @@ public class TileManager {
         grassTileNum[col][row] = 12;// replace with grass tile index 1 (adjust if needed)
     }
 
-    public void plantCropOnSoil(String type, int col, int row) {
-        Crops crop = gp.cropsM.plantCrop(type, col, row);
-        if (crop == null) return;
-        cropsTileNum[col][row] = crop.growthStage;
-    }
-
-    public void updateCropTile() {
-        for (int col = 0; col < gp.maxWorldCol; col++) {
-            for (int row = 0; row < gp.maxWorldRow; row++) {
-                Crops crop = gp.cropsM.cropsMap[col][row];
-                if (crop != null) {
-                    cropsTileNum[col][row] = crop.growthStage;
-                }
-            }
-        }
-    }
-
-    public void drawCrops(Graphics2D g2, int row, int col, int screenX, int screenY) {
-        drawTile(g2, row, col, screenX, screenY, cropsTiles, cropsTileNum);
-    }
-
     public void draw(Graphics2D g2) {
         for (int row = 0; row < gp.maxWorldRow; row++) {
             for (int col = 0; col < gp.maxWorldCol; col++) {
@@ -193,9 +171,6 @@ public class TileManager {
                 //! regards THIS IS HIYO!!
                 drawTile(g2, row, col, screenX, screenY, waterTiles, waterTileNum, true);
                 drawTile(g2, row, col, screenX, screenY, dirtTiles, dirtTileNum);
-                drawCrops(g2, row, col, screenX, screenY);
-//                drawTile(g2, row, col, screenX, screenY, cropsTiles, cropsTileNum);
-
                 drawTile(g2, row, col, screenX, screenY, grassTiles, grassTileNum);
                 //------------------------------------------------------------------------------\\
 

@@ -122,7 +122,7 @@ public class Player extends Entity {
     public void plantCrop() {
         int tileCol = (worldX + solidArea.x) / gp.tileSize;
         int tileRow = (worldY + solidArea.y) / gp.tileSize;
-        gp.tileM.plantCropOnSoil("POTATO", tileCol, tileRow);
+//        gp.tileM.plantCropOnSoil("POTATO", tileCol, tileRow);
     }
 
 

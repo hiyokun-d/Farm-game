@@ -1,6 +1,5 @@
 package Screen;
 
-import Tile.CropsManager;
 import Entity.CollisionChecker;
 import Player.Player;
 import Tile.TileManager;
@@ -32,7 +31,6 @@ public class GamePanel extends JPanel implements Runnable {
 
     public Player player = new Player(this, keyH);
     public TileManager tileM = new TileManager(this);
-    public CropsManager cropsM = new CropsManager(this);
 
     public GamePanel() throws IOException {
 //        Filehandler.load();
@@ -78,8 +76,6 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     public void update() {
-        tileM.updateCropTile();
-        cropsM.update();
         player.update();
     }
 
