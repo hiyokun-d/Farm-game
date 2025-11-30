@@ -4,6 +4,7 @@ import Entity.Entity;
 import Screen.GamePanel;
 import Screen.KeyHandler;
 import fileHandler.Filehandler;
+import types.CropType;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -119,11 +120,12 @@ public class Player extends Entity {
         System.out.println("Hoed tile at (" + tileCol + ", " + tileRow + ")");
     }
 
-    public void plantCrop() {
+    public void plantCrop(CropType type) {
         int tileCol = (worldX + solidArea.x) / gp.tileSize;
         int tileRow = (worldY + solidArea.y) / gp.tileSize;
-//        gp.tileM.plantCropOnSoil("POTATO", tileCol, tileRow);
+        gp.tileM.plantCrop(type, tileCol, tileRow);
     }
+
 
 
     public void update() {
@@ -134,10 +136,21 @@ public class Player extends Entity {
             keyH.interactPressed = false;
             isInteracting = true;
 
-            if (standingOn.equals("GRASS"))
-                hoeTile();
-            if (standingOn.equals("SOIL") && !standingOn.equals("CROPS"))
-                plantCrop();
+//            if (standingOn.equals("GRASS"))
+//                hoeTile();
+//            if (standingOn.equals("SOIL") && !standingOn.equals("CROPS"))
+//                plantCrop();
+
+            switch (standingOn) {
+                case "GRASS" -> hoeTile();
+                case "SOIL" -> {
+                    if (!standingOn.startsWith("CROPS"))
+                        plantCrop(CropType.WHEAT); //? FOR NOW IT'S JUST A TEST
+                    else
+                        System.out.println("There's already a crop planted here!");
+                    // TODO: MAKE THE INVENTORY SYSTEM OR WHATEVER
+                }
+            }
 
             // TODO: when it's triggered check the player hands, and collide where the player standing on
             // TODO: if the player is interacting with hoe, then change the TILE below to FARMED_SOIL

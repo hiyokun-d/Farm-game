@@ -41,6 +41,24 @@ public class GamePanel extends JPanel implements Runnable {
         this.setFocusable(true);
     }
 
+    public void update() {
+        player.update();
+    }
+
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        Graphics2D g2 = (Graphics2D) g;
+
+        // PLS TAMBAHIN ELEMEN DISINI COK, KALO ADA ELEMEN YANG HILANG! CHECK DISINI DULU
+        // GW CAPEK DEBUGGING GEGARA SALAH LAYER DOANG ANJENG
+        tileM.draw(g2);
+        tileM.drawTileOutline(g2, player.hoverRow, player.hoverCol);
+
+        player.draw(g2);
+        g2.dispose();
+    }
+
+    //! DON'T TOUCH THIS METHOD or YOU'LL BREAK THE GAME LOOP, I SWEAR PLSSSS DON'T TOUCH IT OR I WILL EXPLODE TO FIX IT AGAIN
     public void startGameThread() {
         gameThread = new Thread(this);
         gameThread.start();
@@ -73,22 +91,5 @@ public class GamePanel extends JPanel implements Runnable {
                 e.printStackTrace();
             }
         }
-    }
-
-    public void update() {
-        player.update();
-    }
-
-    public void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        Graphics2D g2 = (Graphics2D) g;
-
-        // PLS TAMBAHIN ELEMEN DISINI COK, KALO ADA ELEMEN YANG HILANG! CHECK DISINI DULU
-        // GW CAPEK DEBUGGING GEGARA SALAH LAYER DOANG ANJENG
-        tileM.draw(g2);
-        tileM.drawTileOutline(g2, player.hoverRow, player.hoverCol);
-
-        player.draw(g2);
-        g2.dispose();
     }
 }

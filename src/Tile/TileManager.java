@@ -1,6 +1,7 @@
 package Tile;
 
 import Screen.GamePanel;
+import types.CropType;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -27,7 +28,7 @@ public class TileManager {
     public Tile[] dirtTiles;
     public int[][] dirtTileNum;
 
-    public Tile[] cropsTiles;
+    public Crop[] cropsTiles;
     public int[][] cropsTileNum;
 
     public TileManager(GamePanel gp) throws IOException {
@@ -45,7 +46,7 @@ public class TileManager {
         dirtTiles = new Tile[1500];
         dirtTileNum = new int[gp.maxWorldCol][gp.maxWorldRow];
 
-        cropsTiles = new Tile[500];
+        cropsTiles = new Crop[500];
         cropsTileNum = new int[gp.maxWorldCol][gp.maxWorldRow];
 
         for (int col = 0; col < gp.maxWorldCol; col++) {
@@ -62,12 +63,95 @@ public class TileManager {
         loadTileSet("Water.png", "WATER", false, waterTiles, 0);
         loadTileSet("Grass.png", "GRASS", true, grassTiles, 0);
         loadTileSet("Bitmask_references 1.png", "SOLID_COLLISION", true, tiles, 1);
-        loadTileSet("Objects/Basic_Plants.png", "CROPS", true, cropsTiles, 1);
         loadTileSet("Tilled_Dirt_Wide.png", "SOIL", true, dirtTiles, 0);
+
+        loadCropsSet("Objects/Basic_Plants.png", cropsTiles, 0);
 
         loadCSV("map_grass.csv", grassTileNum);
         loadCSV("map_water.csv", waterTileNum);
         loadCSV("map_solidCollision.csv", mapTileNum);
+    }
+
+    private void loadCropsSet(String fileName, Crop[] targetArray, int startIndex) throws IOException {
+        BufferedImage tileset = ImageIO.read(new File(ASSET_PATH + fileName));
+
+        int tilesetCols = tileset.getWidth() / ORIGINAL_TILE_SIZE;
+        int tilesetRows = tileset.getHeight() / ORIGINAL_TILE_SIZE;
+        int index = startIndex;
+
+        for (int row = 0; row < tilesetRows; row++) {
+            for (int col = 0; col < tilesetCols; col++) {
+
+                BufferedImage tileImage = tileset.getSubimage(
+                        col * ORIGINAL_TILE_SIZE,
+                        row * ORIGINAL_TILE_SIZE,
+                        ORIGINAL_TILE_SIZE,
+                        ORIGINAL_TILE_SIZE
+                );
+
+                Crop tile = new Crop();
+                tile.image = tileImage;
+                targetArray[index] = tile;
+
+                index++;
+            }
+        }
+    }
+
+    // UNCOMMENT THIS IF WE NEED TO LOAD CROPS LIKE THE NORMAL TILES WITH A COMPLETE PARAM
+    //    private void loadCropsSet(String fileName, String ID, boolean isCollision, Tile[] targetArray, int startIndex) throws IOException {
+//        BufferedImage tileset = ImageIO.read(new File(ASSET_PATH + fileName));
+//
+//        int tilesetCols = tileset.getWidth() / ORIGINAL_TILE_SIZE;
+//        int tilesetRows = tileset.getHeight() / ORIGINAL_TILE_SIZE;
+//        int index = startIndex;
+//
+//        for (int row = 0; row < tilesetRows; row++) {
+//            for (int col = 0; col < tilesetCols; col++) {
+//
+//                BufferedImage tileImage = tileset.getSubimage(
+//                        col * ORIGINAL_TILE_SIZE,
+//                        row * ORIGINAL_TILE_SIZE,
+//                        ORIGINAL_TILE_SIZE,
+//                        ORIGINAL_TILE_SIZE
+//                );
+//
+//                Tile tile = new Tile();
+//                tile.image = tileImage;
+//                tile.id = ID;
+//                tile.collision = isCollision;
+//                targetArray[index] = tile;
+//
+//                index++;
+//            }
+//        }
+//    }
+
+    private void loadTileSet(String fileName, boolean isCollision, Tile[] targetArray, int startIndex) throws IOException {
+        BufferedImage tileset = ImageIO.read(new File(ASSET_PATH + fileName));
+
+        int tilesetCols = tileset.getWidth() / ORIGINAL_TILE_SIZE;
+        int tilesetRows = tileset.getHeight() / ORIGINAL_TILE_SIZE;
+        int index = startIndex;
+
+        for (int row = 0; row < tilesetRows; row++) {
+            for (int col = 0; col < tilesetCols; col++) {
+
+                BufferedImage tileImage = tileset.getSubimage(
+                        col * ORIGINAL_TILE_SIZE,
+                        row * ORIGINAL_TILE_SIZE,
+                        ORIGINAL_TILE_SIZE,
+                        ORIGINAL_TILE_SIZE
+                );
+
+                Tile tile = new Tile();
+                tile.image = tileImage;
+                tile.collision = isCollision;
+                targetArray[index] = tile;
+
+                index++;
+            }
+        }
     }
 
     private void loadTileSet(String fileName, String ID, boolean isCollision, Tile[] targetArray, int startIndex) throws IOException {
@@ -152,6 +236,17 @@ public class TileManager {
         grassTileNum[col][row] = 12;// replace with grass tile index 1 (adjust if needed)
     }
 
+    public void plantCrop(CropType type, int col, int row) {
+        int tileIndex = type.rowIndex;
+
+        Crop crop = cropsTiles[cropsTileNum[col][row]];
+        crop.setID(type.id);
+
+        cropsTileNum[col][row] = tileIndex;
+        System.out.println(crop.getId() + " planted at (" + col + ", " + row + ")");
+
+    }
+
     public void draw(Graphics2D g2) {
         for (int row = 0; row < gp.maxWorldRow; row++) {
             for (int col = 0; col < gp.maxWorldCol; col++) {
@@ -171,6 +266,7 @@ public class TileManager {
                 //! regards THIS IS HIYO!!
                 drawTile(g2, row, col, screenX, screenY, waterTiles, waterTileNum, true);
                 drawTile(g2, row, col, screenX, screenY, dirtTiles, dirtTileNum);
+                drawTile(g2, row, col, screenX, screenY, cropsTiles, cropsTileNum);
                 drawTile(g2, row, col, screenX, screenY, grassTiles, grassTileNum);
                 //------------------------------------------------------------------------------\\
 
