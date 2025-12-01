@@ -69,25 +69,25 @@ public class CollisionChecker {
 
         entity.standingOn = "none";
 
-        int tileIndex = gp.tileM.mapTileNum[col][row];
-        int grassIndex = gp.tileM.grassTileNum[col][row];
-        int dirtIndex = gp.tileM.dirtTileNum[col][row];
-        int cropsIndex = gp.tileM.cropsTileNum[col][row];
+        int tileIndex = gp.render_tiles.mapTileNum[col][row];
+        int grassIndex = gp.render_tiles.grassTileNum[col][row];
+        int dirtIndex = gp.render_tiles.dirtTileNum[col][row];
+        int cropsIndex = gp.render_crops.cropsTileNum[col][row];
 
         if (grassIndex > 0) {
-            Tile grassTile = gp.tileM.grassTiles[grassIndex];
+            Tile grassTile = gp.render_tiles.grassTiles[grassIndex];
             if (grassTile != null)
                 entity.standingOn = grassTile.id;
         }
 
         if (dirtIndex > 0) {
-            Tile dirtTile = gp.tileM.dirtTiles[dirtIndex];
+            Tile dirtTile = gp.render_tiles.dirtTiles[dirtIndex];
             if (dirtTile != null)
                 entity.standingOn = dirtTile.id;
         }
 
         if (cropsIndex > 0) {
-            Tile cropsTile = gp.tileM.cropsTiles[cropsIndex];
+            Tile cropsTile = gp.render_crops.cropsTiles[cropsIndex];
             if (cropsTile != null)
                 entity.standingOn = cropsTile.id;
         }
@@ -95,7 +95,7 @@ public class CollisionChecker {
         // 0 or -1 means "no tile"
         if (tileIndex < 0) return;
 
-        Tile tile = gp.tileM.tiles[tileIndex];
+        Tile tile = gp.render_tiles.tiles[tileIndex];
         if (tile == null) return;
 
         // COLLISION CHECK

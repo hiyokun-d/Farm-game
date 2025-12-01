@@ -109,28 +109,33 @@ public class Player extends Entity {
     public void hoeTile() {
         int tileCol = (worldX + solidArea.x) / gp.tileSize;
         int tileRow = (worldY + solidArea.y) / gp.tileSize;
-        gp.tileM.convertGrassToDirtTile(tileCol, tileRow);
+        gp.render_tiles.convertGrassToDirtTile(tileCol, tileRow);
         System.out.println("Hoed tile at (" + tileCol + ", " + tileRow + ")");
     }
 
     public void unHoeTile() {
         int tileCol = (worldX + solidArea.x) / gp.tileSize;
         int tileRow = (worldY + solidArea.y) / gp.tileSize;
-        gp.tileM.convertDirtToGrassTile(tileCol, tileRow);
+        gp.render_tiles.convertDirtToGrassTile(tileCol, tileRow);
         System.out.println("Hoed tile at (" + tileCol + ", " + tileRow + ")");
     }
 
     public void plantCrop(CropType type) {
         int tileCol = (worldX + solidArea.x) / gp.tileSize;
         int tileRow = (worldY + solidArea.y) / gp.tileSize;
-        gp.tileM.plantCrop(type, tileCol, tileRow);
+        gp.render_crops.plantCrop(type, tileCol, tileRow);
     }
 
 
-
+    int testSubject = 0;
     public void update() {
         hoverCol = (worldX + solidArea.x) / gp.tileSize;
         hoverRow = (worldY + solidArea.y) / gp.tileSize;
+
+        if (keyH.escPressed) {
+            keyH.escPressed = false;
+            testSubject = testSubject == 0 ? 1 : 0;
+        }
 
         if (keyH.interactPressed) {
             keyH.interactPressed = false;
@@ -145,7 +150,9 @@ public class Player extends Entity {
                 case "GRASS" -> hoeTile();
                 case "SOIL" -> {
                     if (!standingOn.startsWith("CROPS"))
-                        plantCrop(CropType.WHEAT); //? FOR NOW IT'S JUST A TEST
+                        if (testSubject == 0)
+                            plantCrop(CropType.WHEAT); //? FOR NOW IT'S JUST A TEST
+                        else plantCrop(CropType.POTATO);
                     else
                         System.out.println("There's already a crop planted here!");
                     // TODO: MAKE THE INVENTORY SYSTEM OR WHATEVER
@@ -165,7 +172,6 @@ public class Player extends Entity {
         }
         movement();
 
-        collisionBottomSide = collisionLeftSide = collisionRightSide = collisionTopSide = collisionOn = false;
         gp.collisionChecker.checkTile(this);
 
         if (isMoving && !collisionOn) {
@@ -176,6 +182,17 @@ public class Player extends Entity {
                 case "right" -> worldX += speed;
             }
         }
+    }
+
+    public void drawTileOutline(Graphics2D g2, int row, int col) {
+        int worldX = col * gp.tileSize;
+        int worldY = row * gp.tileSize;
+        int screenX = worldX - gp.player.worldX + gp.player.screenX;
+        int screenY = worldY - gp.player.worldY + gp.player.screenY;
+
+        g2.setColor(new Color(0, 177, 255, 255)); // yellow highlight
+        g2.setStroke(new BasicStroke(3));
+        g2.drawRect(screenX, screenY, gp.tileSize, gp.tileSize);
     }
 
     public void draw(Graphics2D g2) {

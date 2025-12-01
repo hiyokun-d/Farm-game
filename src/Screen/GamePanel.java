@@ -2,7 +2,8 @@ package Screen;
 
 import Entity.CollisionChecker;
 import Player.Player;
-import Tile.TileManager;
+import Tile.Render_crops;
+import Tile.Render_tiles;
 
 import javax.swing.*;
 import java.awt.*;
@@ -30,7 +31,8 @@ public class GamePanel extends JPanel implements Runnable {
     Thread gameThread;
 
     public Player player = new Player(this, keyH);
-    public TileManager tileM = new TileManager(this);
+    public Render_tiles render_tiles = new Render_tiles(this);
+    public Render_crops render_crops = new Render_crops(this);
 
     public GamePanel() throws IOException {
 //        Filehandler.load();
@@ -42,6 +44,7 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     public void update() {
+        render_crops.updatePlantGrowth();
         player.update();
     }
 
@@ -51,10 +54,12 @@ public class GamePanel extends JPanel implements Runnable {
 
         // PLS TAMBAHIN ELEMEN DISINI COK, KALO ADA ELEMEN YANG HILANG! CHECK DISINI DULU
         // GW CAPEK DEBUGGING GEGARA SALAH LAYER DOANG ANJENG
-        tileM.draw(g2);
-        tileM.drawTileOutline(g2, player.hoverRow, player.hoverCol);
+        render_tiles.draw(g2);
+        render_crops.draw(g2);
 
+        player.drawTileOutline(g2, player.hoverRow, player.hoverCol);
         player.draw(g2);
+
         g2.dispose();
     }
 
