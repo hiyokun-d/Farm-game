@@ -9,7 +9,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 
-public class TileManager {
+public class Render_tiles {
     private final GamePanel gp;
     private final int ORIGINAL_TILE_SIZE = 16;
     private final String ASSET_PATH = "assets/Tiled_files/";
@@ -27,10 +27,7 @@ public class TileManager {
     public Tile[] dirtTiles;
     public int[][] dirtTileNum;
 
-    public Tile[] cropsTiles;
-    public int[][] cropsTileNum;
-
-    public TileManager(GamePanel gp) throws IOException {
+    public Render_tiles(GamePanel gp) throws IOException {
         this.gp = gp;
 
         tiles = new Tile[4500];
@@ -45,13 +42,9 @@ public class TileManager {
         dirtTiles = new Tile[1500];
         dirtTileNum = new int[gp.maxWorldCol][gp.maxWorldRow];
 
-        cropsTiles = new Tile[500];
-        cropsTileNum = new int[gp.maxWorldCol][gp.maxWorldRow];
-
         for (int col = 0; col < gp.maxWorldCol; col++) {
             for (int row = 0; row < gp.maxWorldRow; row++) {
                 dirtTileNum[col][row] = 0; // start with no dirt
-                cropsTileNum[col][row] = 0; // start with no crops
             }
         }
 
@@ -62,12 +55,39 @@ public class TileManager {
         loadTileSet("Water.png", "WATER", false, waterTiles, 0);
         loadTileSet("Grass.png", "GRASS", true, grassTiles, 0);
         loadTileSet("Bitmask_references 1.png", "SOLID_COLLISION", true, tiles, 1);
-        loadTileSet("Objects/Basic_Plants.png", "CROPS", true, cropsTiles, 1);
         loadTileSet("Tilled_Dirt_Wide.png", "SOIL", true, dirtTiles, 0);
 
         loadCSV("map_grass.csv", grassTileNum);
         loadCSV("map_water.csv", waterTileNum);
         loadCSV("map_solidCollision.csv", mapTileNum);
+    }
+
+
+    private void loadTileSet(String fileName, boolean isCollision, Tile[] targetArray, int startIndex) throws IOException {
+        BufferedImage tileset = ImageIO.read(new File(ASSET_PATH + fileName));
+
+        int tilesetCols = tileset.getWidth() / ORIGINAL_TILE_SIZE;
+        int tilesetRows = tileset.getHeight() / ORIGINAL_TILE_SIZE;
+        int index = startIndex;
+
+        for (int row = 0; row < tilesetRows; row++) {
+            for (int col = 0; col < tilesetCols; col++) {
+
+                BufferedImage tileImage = tileset.getSubimage(
+                        col * ORIGINAL_TILE_SIZE,
+                        row * ORIGINAL_TILE_SIZE,
+                        ORIGINAL_TILE_SIZE,
+                        ORIGINAL_TILE_SIZE
+                );
+
+                Tile tile = new Tile();
+                tile.image = tileImage;
+                tile.collision = isCollision;
+                targetArray[index] = tile;
+
+                index++;
+            }
+        }
     }
 
     private void loadTileSet(String fileName, String ID, boolean isCollision, Tile[] targetArray, int startIndex) throws IOException {
@@ -131,17 +151,6 @@ public class TileManager {
         g2.drawImage(tileArr[tileIndex].image, screenX, screenY, gp.tileSize, gp.tileSize, null);
     }
 
-    public void drawTileOutline(Graphics2D g2, int row, int col) {
-        int worldX = col * gp.tileSize;
-        int worldY = row * gp.tileSize;
-        int screenX = worldX - gp.player.worldX + gp.player.screenX;
-        int screenY = worldY - gp.player.worldY + gp.player.screenY;
-
-        g2.setColor(new Color(0, 177, 255, 255)); // yellow highlight
-        g2.setStroke(new BasicStroke(3));
-        g2.drawRect(screenX, screenY, gp.tileSize, gp.tileSize);
-    }
-
     public void convertGrassToDirtTile(int col, int row) {
         grassTileNum[col][row] = 0;  // remove grass
         dirtTileNum[col][row] = 12;   // add dirt
@@ -151,6 +160,8 @@ public class TileManager {
         dirtTileNum[col][row] = 0;   // remove dirt
         grassTileNum[col][row] = 12;// replace with grass tile index 1 (adjust if needed)
     }
+
+
 
     public void draw(Graphics2D g2) {
         for (int row = 0; row < gp.maxWorldRow; row++) {
