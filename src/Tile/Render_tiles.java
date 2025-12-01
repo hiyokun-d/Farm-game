@@ -10,7 +10,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 
-public class TileManager {
+public class Renderer {
     private final GamePanel gp;
     private final int ORIGINAL_TILE_SIZE = 16;
     private final String ASSET_PATH = "assets/Tiled_files/";
@@ -31,7 +31,7 @@ public class TileManager {
     public Crop[] cropsTiles;
     public int[][] cropsTileNum;
 
-    public TileManager(GamePanel gp) throws IOException {
+    public Renderer(GamePanel gp) throws IOException {
         this.gp = gp;
 
         tiles = new Tile[4500];
@@ -90,7 +90,7 @@ public class TileManager {
                 );
 
                 Crop tile = new Crop();
-                tile.image = tileImage;
+                tile.image= tileImage;
                 targetArray[index] = tile;
 
                 index++;
@@ -245,6 +245,18 @@ public class TileManager {
         cropsTileNum[col][row] = tileIndex;
         System.out.println(crop.getId() + " planted at (" + col + ", " + row + ")");
 
+    }
+
+    public void updatePlantGrowth() {
+        for (int row = 0; row < gp.maxWorldRow; row++) {
+            for (int col = 0; col < gp.maxWorldCol; col++) {
+                int tileIndex = cropsTileNum[col][row];
+                if (tileIndex != 0) {
+                    Crop crop = cropsTiles[tileIndex];
+                    crop.grow();
+                }
+            }
+        }
     }
 
     public void draw(Graphics2D g2) {
