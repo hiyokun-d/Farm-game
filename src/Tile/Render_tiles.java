@@ -27,6 +27,9 @@ public class Render_tiles {
     public Tile[] dirtTiles;
     public int[][] dirtTileNum;
 
+    public Tile[] lakeTiles;
+    public int[][] lakeTileNum;
+
     public Render_tiles(GamePanel gp) throws IOException {
         this.gp = gp;
 
@@ -42,6 +45,9 @@ public class Render_tiles {
         dirtTiles = new Tile[1500];
         dirtTileNum = new int[gp.maxWorldCol][gp.maxWorldRow];
 
+        lakeTiles = new Tile[500];
+        lakeTileNum = new int[gp.maxWorldCol][gp.maxWorldRow];
+
         for (int col = 0; col < gp.maxWorldCol; col++) {
             for (int row = 0; row < gp.maxWorldRow; row++) {
                 dirtTileNum[col][row] = 0; // start with no dirt
@@ -56,10 +62,12 @@ public class Render_tiles {
         loadTileSet("Grass.png", "GRASS", true, grassTiles, 0);
         loadTileSet("Bitmask_references 1.png", "SOLID_COLLISION", true, tiles, 1);
         loadTileSet("Tilled_Dirt_Wide.png", "SOIL", true, dirtTiles, 0);
+        loadTileSet("Water.png", "LAKE", true, lakeTiles, 0);
 
         loadCSV("map_grass.csv", grassTileNum);
         loadCSV("map_water.csv", waterTileNum);
         loadCSV("map_solidCollision.csv", mapTileNum);
+        loadCSV("map_lake.csv", lakeTileNum);
     }
 
 
@@ -162,7 +170,6 @@ public class Render_tiles {
     }
 
 
-
     public void draw(Graphics2D g2) {
         for (int row = 0; row < gp.maxWorldRow; row++) {
             for (int col = 0; col < gp.maxWorldCol; col++) {
@@ -183,6 +190,7 @@ public class Render_tiles {
                 drawTile(g2, row, col, screenX, screenY, waterTiles, waterTileNum, true);
                 drawTile(g2, row, col, screenX, screenY, dirtTiles, dirtTileNum);
                 drawTile(g2, row, col, screenX, screenY, grassTiles, grassTileNum);
+                drawTile(g2, row, col, screenX, screenY, lakeTiles, lakeTileNum);
                 //------------------------------------------------------------------------------\\
 
             }

@@ -269,14 +269,14 @@
             </Attribute>
           </value>
         </entry>
-        <entry key="/data/tileData/level3/map64x64_grass.csv">
+        <entry key="/data/tileData/level3/map_grass.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
             </Attribute>
           </value>
         </entry>
-        <entry key="/data/tileData/level3/map_grass.csv">
+        <entry key="/data/tileData/level3/map_lake.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />

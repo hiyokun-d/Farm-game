@@ -1,9 +1,12 @@
 package Player;
 
 import Entity.Entity;
+import Inventory.Item;
 import Screen.GamePanel;
 import Screen.KeyHandler;
 import fileHandler.Filehandler;
+import fileHandler.ItemData;
+import fileHandler.ItemDatabase;
 import types.CropType;
 
 import javax.imageio.ImageIO;
@@ -11,6 +14,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class Player extends Entity {
     GamePanel gp;
@@ -18,12 +22,10 @@ public class Player extends Entity {
     private boolean isMoving = false;
 
     //    private final BufferedImage[] runFrames = new BufferedImage[4];
-    private final BufferedImage[] walkLeft = new BufferedImage[4];
+    private final BufferedImage[] walkLeft = new BufferedImage[4]; // MAX FRAMES IS 4
     private final BufferedImage[] walkRight = new BufferedImage[4];
     private final BufferedImage[] walkUp = new BufferedImage[4];
     private final BufferedImage[] walkDown = new BufferedImage[4];
-
-    public BufferedImage run, dustRun, dustJump, jump, idle;
 
     public final int screenX;
     public final int screenY;
@@ -31,6 +33,15 @@ public class Player extends Entity {
     public boolean canMove = true, canMoveUp = true, canMoveDown = true, canMoveleft = true, canMoveRight = true;
 
     public int hoverCol, hoverRow;
+
+    public ArrayList<Item> inventory = new ArrayList<>();
+    public int selectedSlot = 1;
+    public Item selectedItemByCursor = null; // for mouse selection on UI inventory
+    public Item selectedItemOnHotbar = null;
+
+    public ArrayList<Item> hotbar = new ArrayList<>(10); // max capacity on hotbat we'll be here
+
+//    public Item equippedItem = null;
 
     public Player(GamePanel gp, KeyHandler keyH) throws IOException {
         this.gp = gp;
@@ -43,7 +54,6 @@ public class Player extends Entity {
         solidArea = new Rectangle(0, 0, 15, 15);
         setDefaultValues();
         getPlayerImage();
-
     }
 
     public void setDefaultValues() throws IOException {
@@ -57,6 +67,18 @@ public class Player extends Entity {
         this.width = 35;
         this.height = 35;
         direction = "right";
+
+        for (int i = 0; i < 10; i++)
+            hotbar.add(null);
+
+        addToInventory("HOE");
+        addToInventory("WATERING_CAN");
+        for (int i = 0; i < 5; i++) {
+            addToInventory("WHEAT_SEED");
+            addToInventory("POTATO_SEED");
+        }
+
+        equipStarterTools();
     }
 
     public void getPlayerImage() {
@@ -66,7 +88,6 @@ public class Player extends Entity {
             int padding = 16;
 
             BufferedImage runSheet = ImageIO.read(new File(ASSET_PATH + "character_Spritesheet.png"));
-            run = runSheet.getSubimage(32, 32, 16, 16);
 
             // player Movement loader
             for (int i = 0; i < walkRight.length; i++)
@@ -110,53 +131,199 @@ public class Player extends Entity {
         int tileCol = (worldX + solidArea.x) / gp.tileSize;
         int tileRow = (worldY + solidArea.y) / gp.tileSize;
         gp.render_tiles.convertGrassToDirtTile(tileCol, tileRow);
-        System.out.println("Hoed tile at (" + tileCol + ", " + tileRow + ")");
     }
 
-    public void unHoeTile() {
+    public void harvestCrop() {
         int tileCol = (worldX + solidArea.x) / gp.tileSize;
         int tileRow = (worldY + solidArea.y) / gp.tileSize;
+
+        addToInventory(gp.render_crops.getSeedPlantId(tileCol, tileRow));
+
+        gp.render_crops.harvestCrop(tileCol, tileRow);
         gp.render_tiles.convertDirtToGrassTile(tileCol, tileRow);
-        System.out.println("Hoed tile at (" + tileCol + ", " + tileRow + ")");
     }
 
     public void plantCrop(CropType type) {
         int tileCol = (worldX + solidArea.x) / gp.tileSize;
         int tileRow = (worldY + solidArea.y) / gp.tileSize;
-        gp.render_crops.plantCrop(type, tileCol, tileRow);
+
+        ItemData seedData = selectedItemOnHotbar.data;   // THIS ITEM is the SEED
+        String plantItemId = seedData.plantId;           // THIS is the crop's item ID
+
+        gp.render_crops.plantCrop(type, plantItemId, tileCol, tileRow);
     }
 
+    public void wateredCrop() {
+        int tileCol = (worldX + solidArea.x) / gp.tileSize;
+        int tileRow = (worldY + solidArea.y) / gp.tileSize;
+        gp.render_crops.wateredCrop(tileCol, tileRow);
+    }
 
-    int testSubject = 0;
+    public boolean isHarvestable() {
+        int tileCol = (worldX + solidArea.x) / gp.tileSize;
+        int tileRow = (worldY + solidArea.y) / gp.tileSize;
+        return gp.render_crops.isHarvestable(tileCol, tileRow);
+    }
+
+    public String getSeedPlantId() {
+        int tileCol = (worldX + solidArea.x) / gp.tileSize;
+        int tileRow = (worldY + solidArea.y) / gp.tileSize;
+        return gp.render_crops.getSeedPlantId(tileCol, tileRow);
+    }
+
+    public void addToInventory(String itemID, int amount) {
+        //? instead of looping through database each time, we can just pass the ItemData object
+        ItemData data = ItemDatabase.get(itemID);
+        Item newItem = new Item(data);
+
+        if (data == null) return;
+
+        for (Item i : inventory) {
+            if (i.itemID.equals(itemID)) {
+                i.quantity += amount;
+                updateHotbarForItem(i);
+
+                System.out.println("Added " + itemID + " to inventory. qty: " + i.quantity);
+                //TODO: SAVE HERE
+                return;
+            }
+        }
+        updateHotbarForItem(newItem);
+        inventory.add(newItem);
+    }
+
+    public void addToInventory(String itemID) {
+        //? instead of looping through database each time, we can just pass the ItemData object
+        ItemData data = ItemDatabase.get(itemID);
+        Item newItem = new Item(data);
+        if (data == null) return;
+
+        if (data.stackable) {
+            for (Item i : inventory) {
+                if (i.itemID.equals(itemID)) {
+                    i.quantity++;
+                    updateHotbarForItem(i);
+                    return;
+                }
+            }
+        }
+
+        System.out.println("Added " + itemID + " to inventory.");
+        updateHotbarForItem(newItem);
+        inventory.add(newItem);
+    }
+
+    // TODO: REMOVE THIS LATER!
+    private void equipStarterTools() {
+        int slotIndex = 0;
+
+        for (Item i : inventory) {
+            if (slotIndex >= 10) break;
+            System.out.println(i.itemID + " added to hotbar." + " x" + i.quantity);
+            if (i.data.type == "SEED")
+                System.out.println(i.data.plantId);
+
+            hotbar.set(slotIndex, i);
+            slotIndex++;
+        }
+    }
+
+    public void updateHotbarForItem(Item item) {
+
+        // 1. If item already exists in the hotbar — do nothing.
+        for (int i = 0; i < hotbar.size(); i++) {
+            Item existing = hotbar.get(i);
+            if (existing != null && existing.itemID.equals(item.itemID)) {
+                return;
+            }
+        }
+
+        // 2. Find an empty slot
+        for (int i = 0; i < hotbar.size(); i++) {
+            if (hotbar.get(i) == null) {
+                hotbar.set(i, item);
+                System.out.println("Placed " + item.itemID + " into hotbar slot " + i);
+                return;
+            }
+        }
+
+        // 3. Hotbar full
+        System.out.println("Hotbar full! Cannot place " + item.itemID);
+    }
+
+    // TODO: CHANGE THIS LATER PLSSSSS!!!!
+    // implement UI to this
+    public void showInventory() {
+        System.out.println("----- INVENTORY -----");
+        for (Item i : inventory) {
+            System.out.println(i.itemID + " x" + i.quantity);
+        }
+        System.out.println("---------------------");
+    }
+
+    public void inventoryKeys() {
+        if (keyH.key1Pressed) selectedSlot = 0;
+        if (keyH.key2Pressed) selectedSlot = 1;
+        if (keyH.key3Pressed) selectedSlot = 2;
+        if (keyH.key4Pressed) selectedSlot = 3;
+        if (keyH.key5Pressed) selectedSlot = 4;
+        if (keyH.key6Pressed) selectedSlot = 5;
+        if (keyH.key7Pressed) selectedSlot = 6;
+        if (keyH.key8Pressed) selectedSlot = 7;
+        if (keyH.key9Pressed) selectedSlot = 8;
+        if (keyH.key0Pressed) selectedSlot = 9;
+    }
+
     public void update() {
         hoverCol = (worldX + solidArea.x) / gp.tileSize;
         hoverRow = (worldY + solidArea.y) / gp.tileSize;
 
+//        showInventory();
+
+        inventoryKeys();
+
+        selectedItemOnHotbar = hotbar.get(selectedSlot);
+
+        if (selectedItemOnHotbar != null)
+            System.out.println("Selected item: " + selectedItemOnHotbar.itemID + " x" + selectedItemOnHotbar.quantity);
+        else System.out.println("No item selected.");
+
         if (keyH.escPressed) {
-            keyH.escPressed = false;
-            testSubject = testSubject == 0 ? 1 : 0;
+            showInventory();
         }
 
         if (keyH.interactPressed) {
             keyH.interactPressed = false;
             isInteracting = true;
 
-//            if (standingOn.equals("GRASS"))
-//                hoeTile();
-//            if (standingOn.equals("SOIL") && !standingOn.equals("CROPS"))
-//                plantCrop();
+//            ItemData wheat = ItemDatabase.get("WHEAT");
+//            System.out.println(wheat.id);
 
             switch (standingOn) {
                 case "GRASS" -> hoeTile();
                 case "SOIL" -> {
-                    if (!standingOn.startsWith("CROPS"))
-                        if (testSubject == 0)
-                            plantCrop(CropType.WHEAT); //? FOR NOW IT'S JUST A TEST
-                        else plantCrop(CropType.POTATO);
-                    else
+
+                    if (!standingOn.startsWith("CROPS") && selectedItemOnHotbar != null) {
+
+
+                        plantCrop(selectedItemOnHotbar.data.cropType);
+
+                        selectedItemOnHotbar.quantity--;
+                        if (selectedItemOnHotbar.quantity <= 0) {
+                            System.out.println("Removed " + selectedItemOnHotbar.itemID + " from inventory.");
+                            inventory.remove(selectedItemOnHotbar);
+                            hotbar.set(selectedSlot, null);
+                        }
+                    } else
                         System.out.println("There's already a crop planted here!");
-                    // TODO: MAKE THE INVENTORY SYSTEM OR WHATEVER
                 }
+            }
+
+            if (standingOn.startsWith("CROPS") && !isHarvestable())
+                wateredCrop();
+            else if (isHarvestable()) {
+                System.out.println("Harvested " + getSeedPlantId());
+                harvestCrop();
             }
 
             // TODO: when it's triggered check the player hands, and collide where the player standing on

@@ -88,6 +88,7 @@ public class CollisionChecker {
 
         if (cropsIndex > 0) {
             Tile cropsTile = gp.render_crops.cropsTiles[cropsIndex];
+
             if (cropsTile != null)
                 entity.standingOn = cropsTile.id;
         }

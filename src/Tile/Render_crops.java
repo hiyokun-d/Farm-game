@@ -1,6 +1,7 @@
 package Tile;
 
 import Screen.GamePanel;
+import fileHandler.ItemDatabase;
 import types.CropType;
 
 import javax.imageio.ImageIO;
@@ -64,8 +65,9 @@ public class Render_crops {
         }
     }
 
-    public void plantCrop(CropType type, int col, int row) {
+    public void plantCrop(CropType type, String plantItemId, int col, int row) {
         Crop crop = new Crop(type, type.startIndex);
+        crop.data = ItemDatabase.get(plantItemId);
         crop.growthStage = 0; // Start from seed stage
 
         // Copy growth stage images from the loaded tileset
@@ -79,6 +81,13 @@ public class Render_crops {
         cropsTileNum[col][row] = crop.getCurrentTileIndex();
     }
 
+    public void wateredCrop(int col, int row) {
+        Crop crop = cropsMap[col][row];
+        if (crop != null) {
+            crop.isWatered = true;
+        }
+    }
+
     public void updatePlantGrowth() {
         for (int row = 0; row < gp.maxWorldRow; row++) {
             for (int col = 0; col < gp.maxWorldCol; col++) {
@@ -89,6 +98,27 @@ public class Render_crops {
                 }
             }
         }
+    }
+
+    public boolean isHarvestable(int col, int row) {
+        Crop crop = cropsMap[col][row];
+        return crop != null && crop.isHarvestable;
+    }
+
+    public String getSeedPlantId(int col, int row) {
+        Crop crop = cropsMap[col][row];
+        return (crop != null) ? crop.data.seedId : null;
+    }
+
+    public void harvestCrop(int col, int row) {
+        Crop crop = cropsMap[col][row];
+        if (crop == null || !crop.isHarvestable) return;
+
+//        gp.player.addToInventory(getSeedPlantId(col, row));
+//        gp.player.addToInventory();
+
+        cropsMap[col][row] = null;
+        cropsTileNum[col][row] = 0;
     }
 
     public void draw(Graphics2D g2) {

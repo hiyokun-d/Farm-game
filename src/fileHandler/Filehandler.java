@@ -1,5 +1,9 @@
 package fileHandler;
 
+import types.CropType;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -11,8 +15,10 @@ import java.util.Map;
 public class Filehandler {
     private static final Path file = Path.of("data", "config_PLAYER.txt");
     private static final Map<String, String> data = new HashMap<>();
+    private static final Path itemData = Path.of("data", "itemData.dat");
 
-    public static void load() throws IOException {
+    public static void loadPlayerData() throws IOException {
+
         try {
 
             if (!Files.exists(file)) {
@@ -41,6 +47,77 @@ public class Filehandler {
             System.err.println("Error loading file: " + e.getMessage());
             throw e;
         }
+    }
+
+    public static void loadItemData() {
+        try (BufferedReader br = new BufferedReader(new FileReader(itemData.toFile()))) {
+            String line;
+            ItemData current = null;
+
+            while ((line = br.readLine()) != null) {
+                line = line.trim();
+                if (line.isEmpty()) continue;
+
+                // Start of block: [TYPE]
+                if (line.startsWith("[") && line.endsWith("]")) {
+                    if (current != null) {
+                        ItemDatabase.register(current);
+                    }
+                    current = new ItemData();
+                    current.type = line.substring(1, line.length() - 1);
+                    continue;
+                }
+
+                // Key-value parsing
+                if (line.contains("=")) {
+                    String[] p = line.split("=");
+                    String key = p[0].trim();
+                    String value = p[1].trim();
+
+                    switch (key) {
+                        case "id" -> current.id = value;
+                        case "name" -> current.name = value;
+                        case "stackable" -> current.stackable = Boolean.parseBoolean(value);
+//                        case "startIndex" -> current.startIndex = Integer.parseInt(value);
+
+                        // CROP
+//                        case "stages" -> current.stages = Integer.parseInt(value);
+
+                        case "growthTimes" -> {
+                            String[] split = value.split(",");
+                            current.growthTimes = new int[split.length];
+                            for (int i = 0; i < split.length; i++)
+                                current.growthTimes[i] = Integer.parseInt(split[i]);
+                        }
+                        case "seedId" -> current.seedId = value;
+                        case "harvestId" -> current.harvestId = value;
+
+                        // SEED
+                        case "plantId" -> {
+                            current.plantId = value;
+                            try {
+                                current.cropType = CropType.valueOf(value);
+                            } catch (Exception e) {
+                                System.err.println("Invalid cropType: " + value);
+                            }
+                        }
+                    }
+                }
+            }
+
+            // register last block
+            if (current != null) ItemDatabase.register(current);
+
+            System.out.println("Loaded " + ItemDatabase.items.size() + " items.");
+
+        } catch (IOException e) {
+            System.err.println("Error loading item data: " + e.getMessage());
+        }
+    }
+
+    public static void load() throws IOException {
+        loadItemData();
+        loadPlayerData();
     }
 
     public static void save() throws IOException {
