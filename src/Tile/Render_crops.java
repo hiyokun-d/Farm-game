@@ -1,6 +1,7 @@
 package Tile;
 
 import Screen.GamePanel;
+import fileHandler.ItemData;
 import fileHandler.ItemDatabase;
 import types.CropType;
 
@@ -33,7 +34,11 @@ public class Render_crops {
             }
         }
 
+        // Load crop tileset used both for world crops and item icons
         loadCropsSet("Objects/Basic_Plants.png", cropsTiles, 0);
+
+        // After crops are loaded, assign icons to crop- and seed-type items
+        assignItemIconsFromCrops();
     }
 
     private void drawTile(Graphics2D g2, int row, int col, int screenX, int screenY) {
@@ -62,6 +67,27 @@ public class Render_crops {
                 targetArray[index] = tile;
                 index++;
             }
+        }
+    }
+
+    private void assignItemIconsFromCrops() {
+        // Use the first growth frame for each crop type as the item icon
+        for (ItemData data : ItemDatabase.items.values()) {
+            if (data == null || data.type == null) continue;
+
+            // Only assign icons for crops and seeds; tools stay without icons for now
+            if (!"CROP".equals(data.type) && !"SEED".equals(data.type)) continue;
+
+            CropType cropType = data.cropType;
+            if (cropType == null) continue;
+
+            int tileIndex = cropType.startIndex - 1;
+            if (tileIndex < 0 || tileIndex >= cropsTiles.length) continue;
+
+            Crop tile = cropsTiles[tileIndex];
+            if (tile == null || tile.image == null) continue;
+
+            data.icon = tile.image;
         }
     }
 

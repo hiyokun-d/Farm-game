@@ -332,12 +332,15 @@ public class Player extends Entity {
                 gp.uiContainer.add(itemBox);
 
                 if (item.icon != null) {
-                    System.out.println("Adding item to hotbar: " + item.icon);
+//                    System.out.println("Adding item to hotbar: " + item.icon);
                     UIImage itemImage = new UIImage(
                             x + 4,
                             y + 4,
                             item.icon
                     );
+
+                    itemImage.width = 42;
+                    itemImage.height = 42;
 
                     gp.uiContainer.add(itemImage);
                 } else {
@@ -385,8 +388,8 @@ public class Player extends Entity {
                     case "GRASS" -> hoeTile();
                     case "SOIL" -> {
 
-                        if (!standingOn.startsWith("CROPS") && selectedItemOnHotbar != null && selectedItemOnHotbar.data.type.equals("SEED")) {
-
+                        // Prevent planting a new crop if the player is already standing on one
+                        if (!standingOn.startsWith("CROP") && selectedItemOnHotbar.data.type.equals("SEED")) {
 
                             plantCrop(selectedItemOnHotbar.data.cropType);
 
@@ -396,14 +399,16 @@ public class Player extends Entity {
                                 inventory.remove(selectedItemOnHotbar);
                                 hotbar.set(selectedSlot, null);
                             }
-                        } else
+                        } else {
                             System.out.println("There's already a crop planted here!");
+                        }
                     }
                 }
 
-            if (standingOn.startsWith("CROPS") && !isHarvestable())
+            // Interact with crops on the current tile
+            if (standingOn.startsWith("CROP") && !isHarvestable()) {
                 wateredCrop();
-            else if (isHarvestable()) {
+            } else if (isHarvestable()) {
                 System.out.println("Harvested " + getSeedPlantId());
                 harvestCrop();
             }

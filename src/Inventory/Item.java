@@ -21,5 +21,7 @@ public class Item {
         this.itemID = data.id;
         this.itemName = data.name;
         this.stackable = data.stackable;
+        // Copy the icon reference from the shared ItemData so UI can render it
+        this.icon = data.icon;
     }
 }

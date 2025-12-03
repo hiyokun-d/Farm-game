@@ -31,9 +31,12 @@ public class GamePanel extends JPanel implements Runnable {
     KeyHandler keyH = new KeyHandler();
     Thread gameThread;
 
-    public Player player = new Player(this, keyH);
+    // Initialize tile and crop renderers before the player so item icons
+    // can be assigned from crop tiles before the player's inventory is built.
     public Render_tiles render_tiles = new Render_tiles(this);
     public Render_crops render_crops = new Render_crops(this);
+
+    public Player player = new Player(this, keyH);
 
     public UIContainer uiContainer = new UIContainer();
 

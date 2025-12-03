@@ -25,9 +25,14 @@ public class Entity {
         spriteCounter++;
         if (spriteCounter > frameSpeed) {
             spriteNum++;
+
             if (spriteNum >= frames.length) {
-                spriteNum = 0;
+                // If looping, wrap back to the first frame, otherwise
+                // clamp to the last valid frame index.
+                spriteNum = looping ? 0 : frames.length - 1;
             }
+
+            spriteCounter = 0;
         }
     }
 
