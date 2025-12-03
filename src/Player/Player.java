@@ -4,6 +4,10 @@ import Entity.Entity;
 import Inventory.Item;
 import Screen.GamePanel;
 import Screen.KeyHandler;
+import UI.Components.UIBox;
+import UI.Components.UIImage;
+import UI.Components.UILabel;
+import UI.UIComponent;
 import fileHandler.Filehandler;
 import fileHandler.ItemData;
 import fileHandler.ItemDatabase;
@@ -73,10 +77,8 @@ public class Player extends Entity {
 
         addToInventory("HOE");
         addToInventory("WATERING_CAN");
-        for (int i = 0; i < 5; i++) {
-            addToInventory("WHEAT_SEED");
-            addToInventory("POTATO_SEED");
-        }
+        addToInventory("WHEAT_SEED", 5);
+        addToInventory("POTATO_SEED", 15);
 
         equipStarterTools();
     }
@@ -130,14 +132,16 @@ public class Player extends Entity {
     public void hoeTile() {
         int tileCol = (worldX + solidArea.x) / gp.tileSize;
         int tileRow = (worldY + solidArea.y) / gp.tileSize;
-        gp.render_tiles.convertGrassToDirtTile(tileCol, tileRow);
+        if (selectedItemOnHotbar.data.type.equals("TOOL") && selectedItemOnHotbar.data.id.equals("HOE"))
+            gp.render_tiles.convertGrassToDirtTile(tileCol, tileRow);
     }
 
     public void harvestCrop() {
         int tileCol = (worldX + solidArea.x) / gp.tileSize;
         int tileRow = (worldY + solidArea.y) / gp.tileSize;
 
-        addToInventory(gp.render_crops.getSeedPlantId(tileCol, tileRow));
+        addToInventory(gp.render_crops.getSeedPlantId(tileCol, tileRow), 5);
+//        addToInventory(gp.render_crops.getPlantItemId(tileCol, tileRow), 3);
 
         gp.render_crops.harvestCrop(tileCol, tileRow);
         gp.render_tiles.convertDirtToGrassTile(tileCol, tileRow);
@@ -180,7 +184,8 @@ public class Player extends Entity {
 
         for (Item i : inventory) {
             if (i.itemID.equals(itemID)) {
-                i.quantity += amount;
+                for (int z = 0; z < amount - 1; z++)
+                    i.quantity++;
                 updateHotbarForItem(i);
 
                 System.out.println("Added " + itemID + " to inventory. qty: " + i.quantity);
@@ -189,7 +194,19 @@ public class Player extends Entity {
             }
         }
         updateHotbarForItem(newItem);
+
         inventory.add(newItem);
+        for (Item i : inventory) {
+            if (i.itemID.equals(itemID)) {
+                for (int z = 0; z < amount - 1; z++)
+                    i.quantity++;
+                updateHotbarForItem(i);
+
+                System.out.println("Added " + itemID + " to inventory. qty: " + i.quantity);
+                //TODO: SAVE HERE
+                return;
+            }
+        }
     }
 
     public void addToInventory(String itemID) {
@@ -230,7 +247,6 @@ public class Player extends Entity {
 
     public void updateHotbarForItem(Item item) {
 
-        // 1. If item already exists in the hotbar — do nothing.
         for (int i = 0; i < hotbar.size(); i++) {
             Item existing = hotbar.get(i);
             if (existing != null && existing.itemID.equals(item.itemID)) {
@@ -238,17 +254,14 @@ public class Player extends Entity {
             }
         }
 
-        // 2. Find an empty slot
         for (int i = 0; i < hotbar.size(); i++) {
             if (hotbar.get(i) == null) {
                 hotbar.set(i, item);
-                System.out.println("Placed " + item.itemID + " into hotbar slot " + i);
                 return;
             }
         }
 
-        // 3. Hotbar full
-        System.out.println("Hotbar full! Cannot place " + item.itemID);
+        System.out.println("Hotbar full. Cannot add " + item.itemID);
     }
 
     // TODO: CHANGE THIS LATER PLSSSSS!!!!
@@ -274,19 +287,87 @@ public class Player extends Entity {
         if (keyH.key0Pressed) selectedSlot = 9;
     }
 
+    public void pauseMenu() {
+        UIComponent testBox = new UIComponent(20, 20, 150, 80) {
+            @Override
+            public void draw(Graphics2D g2) {
+                g2.setColor(new Color(0, 0, 0, 150));
+                g2.fillRoundRect(x, y, width, height, 12, 12);
+
+                g2.setColor(Color.WHITE);
+                g2.drawString("Test UI", x + 10, y + 30);
+            }
+        };
+
+        gp.uiContainer.add(testBox); // disabled for now to prevent modification during render
+        System.out.println(gp.uiContainer.getComponents().size());
+    }
+
+    public void showHotbar() {
+        gp.uiContainer.clear();
+
+        int baseX = gp.tileSize / 2;
+        int baseY = gp.screenHeight - gp.tileSize - 10;
+
+        for (int i = 0; i < hotbar.size(); i++) {
+
+            int x = baseX + i * (gp.tileSize + 8);
+            int y = baseY;
+
+            Color slotColor = (i == selectedSlot)
+                    ? new Color(255, 255, 120)
+                    : new Color(70, 70, 70);
+
+            UIBox slotBox = new UIBox(
+                    x - 4, y - 4,
+                    gp.tileSize + 8, gp.tileSize + 8,
+                    slotColor
+            );
+            gp.uiContainer.add(slotBox);
+
+            Item item = hotbar.get(i);
+            if (item != null) {
+
+                UIBox itemBox = new UIBox(x, y, gp.tileSize, gp.tileSize, Color.DARK_GRAY);
+                gp.uiContainer.add(itemBox);
+
+                if (item.icon != null) {
+                    System.out.println("Adding item to hotbar: " + item.icon);
+                    UIImage itemImage = new UIImage(
+                            x + 4,
+                            y + 4,
+                            item.icon
+                    );
+
+                    gp.uiContainer.add(itemImage);
+                } else {
+                    UILabel itemLabel = new UILabel(
+                            x + gp.tileSize / 2,
+                            y + gp.tileSize / 2,
+                            item.data.id,
+                            Color.WHITE
+                    );
+                    itemLabel.setAlign = "CENTER";
+                    gp.uiContainer.add(itemLabel);
+                }
+            }
+        }
+    }
+
     public void update() {
         hoverCol = (worldX + solidArea.x) / gp.tileSize;
         hoverRow = (worldY + solidArea.y) / gp.tileSize;
 
 //        showInventory();
 
+
         inventoryKeys();
 
         selectedItemOnHotbar = hotbar.get(selectedSlot);
 
-        if (selectedItemOnHotbar != null)
-            System.out.println("Selected item: " + selectedItemOnHotbar.itemID + " x" + selectedItemOnHotbar.quantity);
-        else System.out.println("No item selected.");
+//        if (selectedItemOnHotbar != null)
+//            System.out.println("Selected item: " + selectedItemOnHotbar.itemID + " x" + selectedItemOnHotbar.quantity);
+//        else System.out.println("No item selected.");
 
         if (keyH.escPressed) {
             showInventory();
@@ -299,25 +380,26 @@ public class Player extends Entity {
 //            ItemData wheat = ItemDatabase.get("WHEAT");
 //            System.out.println(wheat.id);
 
-            switch (standingOn) {
-                case "GRASS" -> hoeTile();
-                case "SOIL" -> {
+            if (selectedItemOnHotbar != null)
+                switch (standingOn) {
+                    case "GRASS" -> hoeTile();
+                    case "SOIL" -> {
 
-                    if (!standingOn.startsWith("CROPS") && selectedItemOnHotbar != null) {
+                        if (!standingOn.startsWith("CROPS") && selectedItemOnHotbar != null && selectedItemOnHotbar.data.type.equals("SEED")) {
 
 
-                        plantCrop(selectedItemOnHotbar.data.cropType);
+                            plantCrop(selectedItemOnHotbar.data.cropType);
 
-                        selectedItemOnHotbar.quantity--;
-                        if (selectedItemOnHotbar.quantity <= 0) {
-                            System.out.println("Removed " + selectedItemOnHotbar.itemID + " from inventory.");
-                            inventory.remove(selectedItemOnHotbar);
-                            hotbar.set(selectedSlot, null);
-                        }
-                    } else
-                        System.out.println("There's already a crop planted here!");
+                            selectedItemOnHotbar.quantity--;
+                            if (selectedItemOnHotbar.quantity <= 0) {
+                                System.out.println("Removed " + selectedItemOnHotbar.itemID + " from inventory.");
+                                inventory.remove(selectedItemOnHotbar);
+                                hotbar.set(selectedSlot, null);
+                            }
+                        } else
+                            System.out.println("There's already a crop planted here!");
+                    }
                 }
-            }
 
             if (standingOn.startsWith("CROPS") && !isHarvestable())
                 wateredCrop();
@@ -376,6 +458,7 @@ public class Player extends Entity {
 //        g2.fillRect(screenX + solidArea.x, screenY + solidArea.y, solidArea.width, solidArea.height);
 
         g2.drawImage(imageToDraw, this.screenX, this.screenY, this.width, this.height, null);
+        showHotbar();
     }
 }
 

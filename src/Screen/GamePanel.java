@@ -4,6 +4,7 @@ import Entity.CollisionChecker;
 import Player.Player;
 import Tile.Render_crops;
 import Tile.Render_tiles;
+import UI.UIContainer;
 
 import javax.swing.*;
 import java.awt.*;
@@ -34,6 +35,8 @@ public class GamePanel extends JPanel implements Runnable {
     public Render_tiles render_tiles = new Render_tiles(this);
     public Render_crops render_crops = new Render_crops(this);
 
+    public UIContainer uiContainer = new UIContainer();
+
     public GamePanel() throws IOException {
 //        Filehandler.load();
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
@@ -44,6 +47,8 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     public void update() {
+        uiContainer.update();
+
         render_crops.updatePlantGrowth();
         player.update();
     }
@@ -59,6 +64,8 @@ public class GamePanel extends JPanel implements Runnable {
 
         player.drawTileOutline(g2, player.hoverRow, player.hoverCol);
         player.draw(g2);
+
+        uiContainer.draw(g2);
 
         g2.dispose();
     }
