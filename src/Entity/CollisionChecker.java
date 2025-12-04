@@ -72,7 +72,7 @@ public class CollisionChecker {
 
         int grassIndex = gp.render_tiles.grassTileNum[col][row];
         int dirtIndex = gp.render_tiles.dirtTileNum[col][row];
-        int cropsIndex = gp.render_crops.cropsTileNum[col][row];
+        int cropsIndex = gp.renderingObjects.cropsTileNum[col][row];
         int lakeIndex = gp.render_tiles.lakeTileNum[col][row];
 
         // Base ground
@@ -88,7 +88,7 @@ public class CollisionChecker {
 
         // Crops override ground type
         if (cropsIndex > 0) {
-            Tile cropsTile = gp.render_crops.cropsTiles[cropsIndex];
+            Tile cropsTile = gp.renderingObjects.cropsTiles[cropsIndex];
             if (cropsTile != null) entity.standingOn = cropsTile.id;
         }
 
@@ -130,9 +130,9 @@ public class CollisionChecker {
         }
 
         // Crops block movement so the player cannot walk through planted crops
-        int cropsIndex = gp.render_crops.cropsTileNum[col][row];
+        int cropsIndex = gp.renderingObjects.cropsTileNum[col][row];
         if (cropsIndex > 0) {
-            Tile cropsTile = gp.render_crops.cropsTiles[cropsIndex];
+            Tile cropsTile = gp.renderingObjects.cropsTiles[cropsIndex];
             if (cropsTile != null && cropsTile.collision) {
                 entity.collisionOn = false;
             }

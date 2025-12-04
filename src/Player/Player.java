@@ -142,18 +142,18 @@ public class Player extends Entity {
         int tileRow = (worldY + solidArea.y) / gp.tileSize;
 
         // Give crop produce
-        String harvestId = gp.render_crops.getHarvestItemId(tileCol, tileRow);
+        String harvestId = gp.renderingObjects.getHarvestItemId(tileCol, tileRow);
         if (harvestId != null) {
             addToInventory(harvestId, 3); // TODO: balance amount later
         }
 
         // Optionally give back some seeds
-        String seedId = gp.render_crops.getSeedItemId(tileCol, tileRow);
+        String seedId = gp.renderingObjects.getSeedItemId(tileCol, tileRow);
         if (seedId != null) {
             addToInventory(seedId, 5);
         }
 
-        gp.render_crops.harvestCrop(tileCol, tileRow);
+        gp.renderingObjects.harvestCrop(tileCol, tileRow);
         gp.render_tiles.convertDirtToGrassTile(tileCol, tileRow);
     }
 
@@ -164,25 +164,25 @@ public class Player extends Entity {
         ItemData seedData = selectedItemOnHotbar.data;   // THIS ITEM is the SEED
         String plantItemId = seedData.plantId;           // THIS is the crop's item ID
 
-        gp.render_crops.plantCrop(type, plantItemId, tileCol, tileRow);
+        gp.renderingObjects.plantCrop(type, plantItemId, tileCol, tileRow);
     }
 
     public void wateredCrop() {
         int tileCol = (worldX + solidArea.x) / gp.tileSize;
         int tileRow = (worldY + solidArea.y) / gp.tileSize;
-        gp.render_crops.wateredCrop(tileCol, tileRow);
+        gp.renderingObjects.wateredCrop(tileCol, tileRow);
     }
 
     public boolean isHarvestable() {
         int tileCol = (worldX + solidArea.x) / gp.tileSize;
         int tileRow = (worldY + solidArea.y) / gp.tileSize;
-        return gp.render_crops.isHarvestable(tileCol, tileRow);
+        return gp.renderingObjects.isHarvestable(tileCol, tileRow);
     }
 
     public String getSeedPlantId() {
         int tileCol = (worldX + solidArea.x) / gp.tileSize;
         int tileRow = (worldY + solidArea.y) / gp.tileSize;
-        return gp.render_crops.getSeedPlantId(tileCol, tileRow);
+        return gp.renderingObjects.getSeedPlantId(tileCol, tileRow);
     }
 
     public void addToInventory(String itemID, int amount) {
@@ -399,7 +399,7 @@ public class Player extends Entity {
 
             int tileCol = (worldX + solidArea.x) / gp.tileSize;
             int tileRow = (worldY + solidArea.y) / gp.tileSize;
-            boolean hasCropHere = gp.render_crops.hasCropAt(tileCol, tileRow);
+            boolean hasCropHere = gp.renderingObjects.hasCropAt(tileCol, tileRow);
 
             if (selectedItemOnHotbar != null) {
                 ItemData data = selectedItemOnHotbar.data;

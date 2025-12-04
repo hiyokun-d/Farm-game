@@ -2,7 +2,7 @@ package Screen;
 
 import Entity.CollisionChecker;
 import Player.Player;
-import Tile.Render_crops;
+import Tile.Render_Objects;
 import Tile.Render_tiles;
 import UI.UIContainer;
 
@@ -34,7 +34,7 @@ public class GamePanel extends JPanel implements Runnable {
     // Initialize tile and crop renderers before the player so item icons
     // can be assigned from crop tiles before the player's inventory is built.
     public Render_tiles render_tiles = new Render_tiles(this);
-    public Render_crops render_crops = new Render_crops(this);
+    public Render_Objects renderingObjects = new Render_Objects(this);
 
     public Player player = new Player(this, keyH);
 
@@ -52,7 +52,7 @@ public class GamePanel extends JPanel implements Runnable {
     public void update() {
         uiContainer.update();
 
-        render_crops.updatePlantGrowth();
+        renderingObjects.updatePlantGrowth();
         player.update();
     }
 
@@ -63,7 +63,7 @@ public class GamePanel extends JPanel implements Runnable {
         // PLS TAMBAHIN ELEMEN DISINI COK, KALO ADA ELEMEN YANG HILANG! CHECK DISINI DULU
         // GW CAPEK DEBUGGING GEGARA SALAH LAYER DOANG ANJENG
         render_tiles.draw(g2);
-        render_crops.draw(g2);
+        renderingObjects.draw(g2);
 
         player.drawTileOutline(g2, player.hoverRow, player.hoverCol);
         player.draw(g2);

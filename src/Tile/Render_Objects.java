@@ -11,7 +11,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
-public class Render_crops {
+public class Render_Objects {
     private final String ASSET_PATH = "assets/Tiled_files/";
     private final GamePanel gp;
     private final int ORIGINAL_TILE_SIZE = 16;
@@ -21,7 +21,7 @@ public class Render_crops {
     public int[][] cropsTileNum;
     public Crop[][] cropsMap; // Track actual crop instances per tile
 
-    public Render_crops(GamePanel gp) throws IOException {
+    public Render_Objects(GamePanel gp) throws IOException {
         this.gp = gp;
 
         cropsTiles = new Crop[500];
