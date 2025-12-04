@@ -8,9 +8,11 @@ public class ItemData {
     public CropType cropType;
     public String type;        // TOOL, CROP, SEED
     public String id;
+    public int icon_id;
     public String name;
     public boolean stackable;
     public BufferedImage icon;
+    public BufferedImage altIcon;
 //    public int startIndex; // for sprite sheet start pointer
 
     // CROP-specific

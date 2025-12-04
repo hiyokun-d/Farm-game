@@ -32,7 +32,9 @@ public class Crop extends Tile {
     }
 
     public void grow() {
+        // Only grow if the crop was watered since the last stage
         if (!isWatered) return;
+
         long currentTime = System.currentTimeMillis();
         if (currentTime - lastGrowthTime < timePerStage) return;
 
@@ -44,6 +46,9 @@ public class Crop extends Tile {
                 setHarvestStatus("HARVESTABLE");
             }
         }
+
+        // Require watering again for the next growth step
+//        isWatered = false;
     }
 
     public BufferedImage getCurrentImage() {

@@ -1,5 +1,6 @@
 [TOOL]
 id=HOE
+icon_id=2
 name=Wooden Hoe
 stackable=false
 power=1
@@ -7,11 +8,13 @@ power=1
 [TOOL]
 id=WATERING_CAN
 name=Basic Watering Can
+icon_id=0
 stackable=false
 waterCapacity=20
 
 [CROP]
 id=WHEAT
+icon_id=5
 seedId=WHEAT_SEED
 harvestId=WHEAT
 growthTimes=1000,2000,3000,4000
@@ -19,6 +22,7 @@ stackable=true
 
 [CROP]
 id=POTATO
+icon_id=11
 seedId=POTATO_SEED
 harvestId=POTATO
 growthTimes=2000,3500,6000
@@ -26,10 +30,12 @@ stackable=true
 
 [SEED]
 id=WHEAT_SEED
+icon_id=0
 plantId=WHEAT
 stackable=true
 
 [SEED]
 id=POTATO_SEED
+icon_id=6
 plantId=POTATO
 stackable=true

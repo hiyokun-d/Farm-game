@@ -15,6 +15,7 @@ public class Item {
 
     // OPTIONAL: for future UI
     public BufferedImage icon; //! YOU STUPID SHIT DON'T CHANGE THE NAME OF THIS
+    public BufferedImage altIcon;
 
     public Item(ItemData data) {
         this.data = data;
@@ -23,5 +24,6 @@ public class Item {
         this.stackable = data.stackable;
         // Copy the icon reference from the shared ItemData so UI can render it
         this.icon = data.icon;
+        this.altIcon = data.altIcon;
     }
 }

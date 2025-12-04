@@ -17,6 +17,7 @@ public class Render_crops {
     private final int ORIGINAL_TILE_SIZE = 16;
 
     public Crop[] cropsTiles;
+    public Crop[] toolTiles; // tiles for tool icons
     public int[][] cropsTileNum;
     public Crop[][] cropsMap; // Track actual crop instances per tile
 
@@ -24,6 +25,8 @@ public class Render_crops {
         this.gp = gp;
 
         cropsTiles = new Crop[500];
+        // size will be adjusted automatically when loading; this is just an upper bound
+        toolTiles = new Crop[50];
         cropsTileNum = new int[gp.maxWorldCol][gp.maxWorldRow];
         cropsMap = new Crop[gp.maxWorldCol][gp.maxWorldRow];
 
@@ -37,7 +40,10 @@ public class Render_crops {
         // Load crop tileset used both for world crops and item icons
         loadCropsSet("Objects/Basic_Plants.png", cropsTiles, 0);
 
-        // After crops are loaded, assign icons to crop- and seed-type items
+        // Load tools tileset used for tool icons (HOE, WATERING_CAN, etc.)
+        loadCropsSet("Objects/Basic_tools_and_meterials.png", toolTiles, 0);
+
+        // After tiles are loaded, assign icons to items based on icon_id
         assignItemIconsFromCrops();
     }
 
@@ -71,23 +77,25 @@ public class Render_crops {
     }
 
     private void assignItemIconsFromCrops() {
-        // Use the first growth frame for each crop type as the item icon
         for (ItemData data : ItemDatabase.items.values()) {
             if (data == null || data.type == null) continue;
 
-            // Only assign icons for crops and seeds; tools stay without icons for now
-            if (!"CROP".equals(data.type) && !"SEED".equals(data.type)) continue;
+            // Crops and seeds: icons come from the crop tileset via icon_id
+            if ("CROP".equals(data.type) || "SEED".equals(data.type)) {
+                if (data.icon_id < 0 || data.icon_id >= cropsTiles.length) continue;
+                Crop tile = cropsTiles[data.icon_id];
+                if (tile == null || tile.image == null) continue;
+                data.icon = tile.image;
+            }
 
-            CropType cropType = data.cropType;
-            if (cropType == null) continue;
-
-            int tileIndex = cropType.startIndex - 1;
-            if (tileIndex < 0 || tileIndex >= cropsTiles.length) continue;
-
-            Crop tile = cropsTiles[tileIndex];
-            if (tile == null || tile.image == null) continue;
-
-            data.icon = tile.image;
+            // Tools: icons come from the tools tileset via icon_id
+            if ("TOOL".equals(data.type)) {
+                if (toolTiles == null) continue;
+                if (data.icon_id < 0 || data.icon_id >= toolTiles.length) continue;
+                Crop tile = toolTiles[data.icon_id];
+                if (tile == null || tile.image == null) continue;
+                data.icon = tile.image;
+            }
         }
     }
 
@@ -131,15 +139,38 @@ public class Render_crops {
         return crop != null && crop.isHarvestable;
     }
 
-    public String getSeedPlantId(int col, int row) {
+    public boolean hasCropAt(int col, int row) {
+        if (col < 0 || col >= gp.maxWorldCol || row < 0 || row >= gp.maxWorldRow) return false;
+        return cropsMap[col][row] != null;
+    }
+
+    public String getSeedItemId(int col, int row) {
         Crop crop = cropsMap[col][row];
         return (crop != null) ? crop.data.seedId : null;
+    }
+
+    public String getHarvestItemId(int col, int row) {
+        Crop crop = cropsMap[col][row];
+        if (crop == null || crop.data == null) {
+            return null;
+        }
+
+        // Prefer explicit harvestId if set; otherwise fall back to the crop's own ID
+        if (crop.data.harvestId != null && !crop.data.harvestId.isEmpty()) {
+            return crop.data.harvestId;
+        }
+
+        return crop.data.id;
+    }
+
+    // Backwards-compat wrapper (old name used by Player)
+    public String getSeedPlantId(int col, int row) {
+        return getSeedItemId(col, row);
     }
 
     public void harvestCrop(int col, int row) {
         Crop crop = cropsMap[col][row];
         if (crop == null || !crop.isHarvestable) return;
-
 //        gp.player.addToInventory(getSeedPlantId(col, row));
 //        gp.player.addToInventory();
 

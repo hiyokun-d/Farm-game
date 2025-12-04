@@ -77,9 +77,10 @@ public class Player extends Entity {
 
         addToInventory("HOE");
         addToInventory("WATERING_CAN");
+        addToInventory("WHEAT");
         addToInventory("WHEAT_SEED", 5);
         addToInventory("POTATO_SEED", 15);
-
+        addToInventory("POTATO", 10);
         equipStarterTools();
     }
 
@@ -140,8 +141,17 @@ public class Player extends Entity {
         int tileCol = (worldX + solidArea.x) / gp.tileSize;
         int tileRow = (worldY + solidArea.y) / gp.tileSize;
 
-        addToInventory(gp.render_crops.getSeedPlantId(tileCol, tileRow), 5);
-//        addToInventory(gp.render_crops.getPlantItemId(tileCol, tileRow), 3);
+        // Give crop produce
+        String harvestId = gp.render_crops.getHarvestItemId(tileCol, tileRow);
+        if (harvestId != null) {
+            addToInventory(harvestId, 3); // TODO: balance amount later
+        }
+
+        // Optionally give back some seeds
+        String seedId = gp.render_crops.getSeedItemId(tileCol, tileRow);
+        if (seedId != null) {
+            addToInventory(seedId, 5);
+        }
 
         gp.render_crops.harvestCrop(tileCol, tileRow);
         gp.render_tiles.convertDirtToGrassTile(tileCol, tileRow);
@@ -237,7 +247,7 @@ public class Player extends Entity {
         for (Item i : inventory) {
             if (slotIndex >= 10) break;
             System.out.println(i.itemID + " added to hotbar." + " x" + i.quantity);
-            if (i.data.type == "SEED")
+            if ("SEED".equals(i.data.type))
                 System.out.println(i.data.plantId);
 
             hotbar.set(slotIndex, i);
@@ -331,8 +341,15 @@ public class Player extends Entity {
                 UIBox itemBox = new UIBox(x, y, gp.tileSize, gp.tileSize, Color.DARK_GRAY);
                 gp.uiContainer.add(itemBox);
 
+                if ("CROP".equals(item.data.type)) {
+                    if (item.altIcon != null) {
+                        item.icon = item.altIcon;
+                    }
+                }
+
                 if (item.icon != null) {
 //                    System.out.println("Adding item to hotbar: " + item.icon);
+
                     UIImage itemImage = new UIImage(
                             x + 4,
                             y + 4,
@@ -380,36 +397,49 @@ public class Player extends Entity {
             keyH.interactPressed = false;
             isInteracting = true;
 
-//            ItemData wheat = ItemDatabase.get("WHEAT");
-//            System.out.println(wheat.id);
+            int tileCol = (worldX + solidArea.x) / gp.tileSize;
+            int tileRow = (worldY + solidArea.y) / gp.tileSize;
+            boolean hasCropHere = gp.render_crops.hasCropAt(tileCol, tileRow);
 
-            if (selectedItemOnHotbar != null)
-                switch (standingOn) {
-                    case "GRASS" -> hoeTile();
-                    case "SOIL" -> {
+            if (selectedItemOnHotbar != null) {
+                ItemData data = selectedItemOnHotbar.data;
 
-                        // Prevent planting a new crop if the player is already standing on one
-                        if (!standingOn.startsWith("CROP") && selectedItemOnHotbar.data.type.equals("SEED")) {
-
-                            plantCrop(selectedItemOnHotbar.data.cropType);
-
-                            selectedItemOnHotbar.quantity--;
-                            if (selectedItemOnHotbar.quantity <= 0) {
-                                System.out.println("Removed " + selectedItemOnHotbar.itemID + " from inventory.");
-                                inventory.remove(selectedItemOnHotbar);
-                                hotbar.set(selectedSlot, null);
-                            }
-                        } else {
-                            System.out.println("There's already a crop planted here!");
-                        }
-                    }
+                // Hoeing: only on grass, with HOE
+                if ("GRASS".equals(standingOn)
+                        && "TOOL".equals(data.type)
+                        && "HOE".equals(data.id)) {
+                    hoeTile();
                 }
 
+                // Planting: only on soil, with SEED, and no existing crop
+                if ("SOIL".equals(standingOn)
+                        && "SEED".equals(data.type)
+                        && !hasCropHere) {
+
+                    plantCrop(data.cropType);
+
+                    selectedItemOnHotbar.quantity--;
+                    if (selectedItemOnHotbar.quantity <= 0) {
+                        System.out.println("Removed " + selectedItemOnHotbar.itemID + " from inventory.");
+                        inventory.remove(selectedItemOnHotbar);
+                        hotbar.set(selectedSlot, null);
+                    }
+                } else if ("SOIL".equals(standingOn)
+                        && "SEED".equals(data.type)
+                        && hasCropHere) {
+                    System.out.println("There's already a crop planted here!");
+                }
+            }
+
             // Interact with crops on the current tile
-            if (standingOn.startsWith("CROP") && !isHarvestable()) {
-                wateredCrop();
-            } else if (isHarvestable()) {
-                System.out.println("Harvested " + getSeedPlantId());
+            if (hasCropHere && !isHarvestable()) {
+                // Only water if holding the watering can
+                if (selectedItemOnHotbar != null
+                        && "TOOL".equals(selectedItemOnHotbar.data.type)
+                        && "WATERING_CAN".equals(selectedItemOnHotbar.data.id)) {
+                    wateredCrop();
+                }
+            } else if (hasCropHere && isHarvestable()) {
                 harvestCrop();
             }
 

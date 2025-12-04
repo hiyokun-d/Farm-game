@@ -75,14 +75,24 @@ public class Filehandler {
                     String value = p[1].trim();
 
                     switch (key) {
-                        case "id" -> current.id = value;
+                        case "id" -> {
+                            current.id = value;
+                            // For CROP blocks, also set cropType based on the ID name (must match enum)
+                            if ("CROP".equals(current.type)) {
+                                try {
+                                    current.cropType = CropType.valueOf(value);
+                                } catch (Exception e) {
+                                    System.err.println("Invalid cropType for id: " + value);
+                                }
+                            }
+                        }
                         case "name" -> current.name = value;
                         case "stackable" -> current.stackable = Boolean.parseBoolean(value);
 //                        case "startIndex" -> current.startIndex = Integer.parseInt(value);
 
                         // CROP
 //                        case "stages" -> current.stages = Integer.parseInt(value);
-
+                        case "icon_id" -> current.icon_id = Integer.parseInt(value);
                         case "growthTimes" -> {
                             String[] split = value.split(",");
                             current.growthTimes = new int[split.length];
