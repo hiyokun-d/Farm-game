@@ -1,6 +1,7 @@
 package UI.Components;
 
 import UI.UIComponent;
+import UI.UITheme;
 
 import java.awt.*;
 
@@ -11,9 +12,9 @@ import java.awt.*;
 public class UIButton extends UIComponent {
 
     public String label;
-    public Color background = new Color(60, 60, 60);
-    public Color hoverColor = new Color(90, 90, 90);
-    public Color textColor = Color.WHITE;
+    public Color background = UITheme.BUTTON_BG;
+    public Color hoverColor = UITheme.BUTTON_HOVER;
+    public Color textColor = UITheme.TEXT_PRIMARY;
 
     private boolean hovered = false;
 
@@ -28,6 +29,7 @@ public class UIButton extends UIComponent {
         g2.fillRect(x, y, width, height);
 
         g2.setColor(textColor);
+        g2.setFont(UITheme.FONT_DEFAULT);
         FontMetrics metrics = g2.getFontMetrics();
         int textWidth = metrics.stringWidth(label);
         int textHeight = metrics.getHeight();

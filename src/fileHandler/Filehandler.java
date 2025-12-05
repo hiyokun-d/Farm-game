@@ -102,6 +102,15 @@ public class Filehandler {
                         case "seedId" -> current.seedId = value;
                         case "harvestId" -> current.harvestId = value;
 
+                        // Economy
+                        case "price" -> {
+                            try {
+                                current.price = Integer.parseInt(value);
+                            } catch (NumberFormatException e) {
+                                System.err.println("Invalid price for item " + current.id + ": " + value);
+                            }
+                        }
+
                         // SEED
                         case "plantId" -> {
                             current.plantId = value;

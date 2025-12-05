@@ -1,5 +1,7 @@
 package Entity;
 
+import Screen.GamePanel;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
@@ -20,6 +22,12 @@ public class Entity {
     public int spriteCounter = 0;
     public int spriteNum = 0; // starting from frame 0
     public int frameSpeed = 5;
+
+    public GamePanel gp;
+
+    public Entity(GamePanel gp) {
+        this.gp = gp;
+    }
 
     public void updateAnimation(BufferedImage[] frames, boolean looping) {
         spriteCounter++;

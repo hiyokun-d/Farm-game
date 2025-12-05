@@ -15,6 +15,9 @@ public class ItemData {
     public BufferedImage altIcon;
 //    public int startIndex; // for sprite sheet start pointer
 
+    // General economy data
+    public int price;          // buy/sell price used by merchants
+
     // CROP-specific
     public int stages;
     public int[] growthTimes;

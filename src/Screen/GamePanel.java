@@ -1,14 +1,19 @@
 package Screen;
 
+import NPC.BaseNPC;
 import Entity.CollisionChecker;
+import NPC.MerchantNPC;
 import Player.Player;
 import Tile.Render_Objects;
 import Tile.Render_tiles;
 import UI.UIContainer;
+import UI.Components.ShopUI;
 
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class GamePanel extends JPanel implements Runnable {
     // WINDOW SETTINGS
@@ -40,6 +45,13 @@ public class GamePanel extends JPanel implements Runnable {
 
     public UIContainer uiContainer = new UIContainer();
 
+    // List of all NPCs in the world (currently just the merchant)
+    public List<BaseNPC> npcs = new ArrayList<>();
+
+    // Merchant shop state
+    public boolean shopOpen = false;
+    private ShopUI shopUI;
+
     public GamePanel() throws IOException {
 //        Filehandler.load();
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
@@ -47,12 +59,29 @@ public class GamePanel extends JPanel implements Runnable {
         this.setDoubleBuffered(true); // better rendering performance
         this.addKeyListener(keyH);
         this.setFocusable(true);
+
+        // Create a single merchant NPC near the starting farm area
+        npcs.add(new MerchantNPC(
+                this,
+                "Merchant",
+                tileSize * 20,
+                tileSize * 19,
+                new String[]{
+                        "Welcome!",
+                        "Sell crops, buy seeds with me."
+                }
+        ));
     }
 
     public void update() {
         uiContainer.update();
 
         renderingObjects.updatePlantGrowth();
+
+        for (BaseNPC npc : npcs) {
+            npc.update();
+        }
+
         player.update();
     }
 
@@ -64,6 +93,10 @@ public class GamePanel extends JPanel implements Runnable {
         // GW CAPEK DEBUGGING GEGARA SALAH LAYER DOANG ANJENG
         render_tiles.draw(g2);
         renderingObjects.draw(g2);
+
+        for (BaseNPC npc : npcs) {
+            npc.draw(g2);
+        }
 
         player.drawTileOutline(g2, player.hoverRow, player.hoverCol);
         player.draw(g2);
@@ -106,5 +139,30 @@ public class GamePanel extends JPanel implements Runnable {
                 e.printStackTrace();
             }
         }
+    }
+
+    // Expose key handler for UI components like ShopUI
+    public KeyHandler getKeyHandler() {
+        return keyH;
+    }
+
+    // Open merchant shop overlay
+    public void openShop() {
+        if (shopOpen) return;
+        shopOpen = true;
+        shopUI = new ShopUI(this, player, keyH);
+        uiContainer.clear();
+        uiContainer.add(shopUI);
+        player.canMove = false;
+    }
+
+    // Close merchant shop overlay
+    public void closeShop() {
+        shopOpen = false;
+        if (shopUI != null) {
+            uiContainer.remove(shopUI);
+            shopUI = null;
+        }
+        player.canMove = true;
     }
 }

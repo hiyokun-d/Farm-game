@@ -1,6 +1,7 @@
 package UI.Components;
 
 import UI.UIComponent;
+import UI.UITheme;
 
 import java.awt.*;
 
@@ -12,7 +13,7 @@ public class UILabel extends UIComponent {
 
     public String text;
     public Color color;
-    public Font font = new Font("Arial", Font.PLAIN, 12);
+    public Font font = UITheme.FONT_DEFAULT;
     public String setAlign = "TOP-LEFT"; // CENTER, TOP-LEFT, TOP-CENTER, TOP-RIGHT, BOTTOM-LEFT, BOTTOM-CENTER, BOTTOM-RIGHT
 
     public UILabel(int x, int y, String text, Color color) {

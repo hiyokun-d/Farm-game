@@ -4,6 +4,7 @@ icon_id=2
 name=Wooden Hoe
 stackable=false
 power=1
+price=1000
 
 [TOOL]
 id=WATERING_CAN
@@ -11,31 +12,40 @@ name=Basic Watering Can
 icon_id=0
 stackable=false
 waterCapacity=20
+price=1000
 
 [CROP]
 id=WHEAT
 icon_id=5
+name=wheat
 seedId=WHEAT_SEED
 harvestId=WHEAT
 growthTimes=1000,2000,3000,4000
 stackable=true
+price=3500
 
 [CROP]
 id=POTATO
 icon_id=11
+name=potato
 seedId=POTATO_SEED
 harvestId=POTATO
 growthTimes=2000,3500,6000
 stackable=true
+price=4500
 
 [SEED]
 id=WHEAT_SEED
 icon_id=0
+name=wheat seed
 plantId=WHEAT
 stackable=true
+price=1000
 
 [SEED]
 id=POTATO_SEED
 icon_id=6
+name=potato seed
 plantId=POTATO
 stackable=true
+price=1500

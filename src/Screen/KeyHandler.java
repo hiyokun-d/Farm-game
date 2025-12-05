@@ -6,8 +6,8 @@ import java.awt.event.KeyListener;
 public class KeyHandler implements KeyListener {
 
     public boolean upPressed, downPressed, leftPressed, rightPressed, escPressed, interactPressed;
-
     public boolean key1Pressed, key2Pressed, key3Pressed, key4Pressed, key5Pressed, key6Pressed, key7Pressed, key8Pressed, key9Pressed, key0Pressed;
+    public boolean tabPressed;
 
     @Override
     public void keyTyped(KeyEvent e) {
@@ -71,6 +71,9 @@ public class KeyHandler implements KeyListener {
             case KeyEvent.VK_0:
                 key0Pressed = true;
                 break;
+            case KeyEvent.VK_TAB:
+                tabPressed = true;
+                break;
         }
     }
 
@@ -130,6 +133,9 @@ public class KeyHandler implements KeyListener {
                 break;
             case KeyEvent.VK_0:
                 key0Pressed = false;
+                break;
+            case KeyEvent.VK_TAB:
+                tabPressed = false;
                 break;
         }
     }

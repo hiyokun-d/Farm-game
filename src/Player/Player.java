@@ -2,10 +2,10 @@ package Player;
 
 import Entity.Entity;
 import Inventory.Item;
+import NPC.BaseNPC;
 import Screen.GamePanel;
 import Screen.KeyHandler;
-import UI.Components.UIBox;
-import UI.Components.UIImage;
+import UI.Components.UIItemSlot;
 import UI.Components.UILabel;
 import UI.UIComponent;
 import fileHandler.Filehandler;
@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class Player extends Entity {
-    GamePanel gp;
     KeyHandler keyH = new KeyHandler();
     private boolean isMoving = false;
 
@@ -45,10 +44,13 @@ public class Player extends Entity {
 
     public ArrayList<Item> hotbar = new ArrayList<>(10); // max capacity on hotbat we'll be here
 
+    // Simple currency used by merchants
+    public int gold = 0;
+
 //    public Item equippedItem = null;
 
     public Player(GamePanel gp, KeyHandler keyH) throws IOException {
-        this.gp = gp;
+        super(gp);
         this.keyH = keyH;
 
         this.screenX = gp.screenWidth / 2 - (gp.tileSize / 2);
@@ -68,6 +70,8 @@ public class Player extends Entity {
         this.worldY = gp.tileSize * 19; // row 7
 
         this.speed = Filehandler.getInt("playerSpeed");
+        this.gold = Filehandler.getInt("gold");
+
         this.width = 35;
         this.height = 35;
         direction = "right";
@@ -77,10 +81,10 @@ public class Player extends Entity {
 
         addToInventory("HOE");
         addToInventory("WATERING_CAN");
-        addToInventory("WHEAT");
-        addToInventory("WHEAT_SEED", 5);
-        addToInventory("POTATO_SEED", 15);
-        addToInventory("POTATO", 10);
+//        addToInventory("WHEAT");
+//        addToInventory("WHEAT_SEED", 5);
+//        addToInventory("POTATO_SEED", 5);
+//        addToInventory("POTATO", 10);
         equipStarterTools();
     }
 
@@ -145,12 +149,6 @@ public class Player extends Entity {
         String harvestId = gp.renderingObjects.getHarvestItemId(tileCol, tileRow);
         if (harvestId != null) {
             addToInventory(harvestId, 3); // TODO: balance amount later
-        }
-
-        // Optionally give back some seeds
-        String seedId = gp.renderingObjects.getSeedItemId(tileCol, tileRow);
-        if (seedId != null) {
-            addToInventory(seedId, 5);
         }
 
         gp.renderingObjects.harvestCrop(tileCol, tileRow);
@@ -319,64 +317,54 @@ public class Player extends Entity {
         int baseX = gp.tileSize / 2;
         int baseY = gp.screenHeight - gp.tileSize - 10;
 
+        // Show current gold in the top-left corner
+        UILabel goldLabel = new UILabel(10, 10, "Gold: " + gold, Color.YELLOW);
+        gp.uiContainer.add(goldLabel);
+
         for (int i = 0; i < hotbar.size(); i++) {
 
             int x = baseX + i * (gp.tileSize + 8);
             int y = baseY;
 
-            Color slotColor = (i == selectedSlot)
-                    ? new Color(255, 255, 120)
-                    : new Color(70, 70, 70);
-
-            UIBox slotBox = new UIBox(
-                    x - 4, y - 4,
-                    gp.tileSize + 8, gp.tileSize + 8,
-                    slotColor
-            );
-            gp.uiContainer.add(slotBox);
-
             Item item = hotbar.get(i);
+
+            // Choose icon/label for this slot
+            java.awt.image.BufferedImage icon = null;
+            String label = "";
+            int quantity = 0;
+
             if (item != null) {
-
-                UIBox itemBox = new UIBox(x, y, gp.tileSize, gp.tileSize, Color.DARK_GRAY);
-                gp.uiContainer.add(itemBox);
-
-                if ("CROP".equals(item.data.type)) {
-                    if (item.altIcon != null) {
-                        item.icon = item.altIcon;
-                    }
+                if ("CROP".equals(item.data.type) && item.altIcon != null) {
+                    item.icon = item.altIcon;
                 }
-
-                if (item.icon != null) {
-//                    System.out.println("Adding item to hotbar: " + item.icon);
-
-                    UIImage itemImage = new UIImage(
-                            x + 4,
-                            y + 4,
-                            item.icon
-                    );
-
-                    itemImage.width = 42;
-                    itemImage.height = 42;
-
-                    gp.uiContainer.add(itemImage);
-                } else {
-                    UILabel itemLabel = new UILabel(
-                            x + gp.tileSize / 2,
-                            y + gp.tileSize / 2,
-                            item.data.id,
-                            Color.WHITE
-                    );
-                    itemLabel.setAlign = "CENTER";
-                    gp.uiContainer.add(itemLabel);
-                }
+                icon = item.icon;
+                label = (icon == null && item.data != null) ? item.data.id : "";
+                quantity = item.quantity;
             }
+
+            UIItemSlot slot = new UIItemSlot(
+                    x,
+                    y,
+                    gp.tileSize,
+                    icon,
+                    label,
+                    quantity,
+                    i == selectedSlot
+            );
+
+            gp.uiContainer.add(slot);
         }
     }
 
     public void update() {
         hoverCol = (worldX + solidArea.x) / gp.tileSize;
         hoverRow = (worldY + solidArea.y) / gp.tileSize;
+
+        // If shop is open, let UI handle inputs; prevent movement/world interaction
+        if (gp.shopOpen) {
+            isMoving = false;
+            return;
+        }
 
 //        showInventory();
 
@@ -443,6 +431,13 @@ public class Player extends Entity {
                 harvestCrop();
             }
 
+            // Interact with nearby NPCs (e.g., merchant)
+            for (BaseNPC npc : gp.npcs) {
+                if (isNear(npc)) {
+                    npc.onInteract(this);
+                }
+            }
+
             // TODO: when it's triggered check the player hands, and collide where the player standing on
             // TODO: if the player is interacting with hoe, then change the TILE below to FARMED_SOIL
 
@@ -479,6 +474,19 @@ public class Player extends Entity {
         g2.drawRect(screenX, screenY, gp.tileSize, gp.tileSize);
     }
 
+    private boolean isNear(BaseNPC npc) {
+        int thisCenterX = worldX + solidArea.x + solidArea.width / 2;
+        int thisCenterY = worldY + solidArea.y + solidArea.height / 2;
+        int npcCenterX = npc.worldX + npc.solidArea.x + npc.solidArea.width / 2;
+        int npcCenterY = npc.worldY + npc.solidArea.y + npc.solidArea.height / 2;
+
+        int dx = Math.abs(thisCenterX - npcCenterX);
+        int dy = Math.abs(thisCenterY - npcCenterY);
+        int maxDistance = gp.tileSize; // within 1 tile range
+
+        return dx <= maxDistance && dy <= maxDistance;
+    }
+
     public void draw(Graphics2D g2) {
         BufferedImage imageToDraw = null;
 
@@ -493,7 +501,11 @@ public class Player extends Entity {
 //        g2.fillRect(screenX + solidArea.x, screenY + solidArea.y, solidArea.width, solidArea.height);
 
         g2.drawImage(imageToDraw, this.screenX, this.screenY, this.width, this.height, null);
-        showHotbar();
+
+        // Don't draw hotbar when shop UI is open (shop handles its own UI)
+        if (!gp.shopOpen) {
+            showHotbar();
+        }
     }
 }
 
