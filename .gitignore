@@ -1,5 +1,5 @@
 # out/
-.idea/
-RPG-game.iml
+#.idea/
+# RPG-game.iml
 .DS_STORE
 */.DS_STORE
