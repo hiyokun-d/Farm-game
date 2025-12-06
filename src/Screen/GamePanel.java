@@ -64,8 +64,8 @@ public class GamePanel extends JPanel implements Runnable {
         npcs.add(new MerchantNPC(
                 this,
                 "Merchant",
-                tileSize * 20,
-                tileSize * 19,
+                tileSize * 50,
+                tileSize * 24,
                 new String[]{
                         "Welcome!",
                         "Sell crops, buy seeds with me."
