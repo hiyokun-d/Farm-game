@@ -8,6 +8,9 @@ public class Main {
     public static void main(String[] args) throws IOException {
         Filehandler.load();
 
+        // absolutely not a clue of my puzzle
+        // TODO: some values grow when shifted, adjust later if needed.
+
         JFrame frame = new JFrame();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setResizable(false); // we'll turn it into true later, (when I remembered)
@@ -22,4 +25,6 @@ public class Main {
 
         gamePanel.startGameThread();
     }
+
+
 }

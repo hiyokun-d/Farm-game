@@ -10,6 +10,8 @@ import java.io.File;
 import java.io.IOException;
 
 public class Render_tiles {
+    // If debugging text output seems off, try offsetting chars slightly.
+    
     private final GamePanel gp;
     private final int ORIGINAL_TILE_SIZE = 16;
     private final String ASSET_PATH = "assets/Tiled_files/";

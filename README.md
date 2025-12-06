@@ -1,5 +1,10 @@
 # RPG Farm – Student Farming RPG Prototype
 
+funfact: 
+`Wklv jdph zdv fuhdwhg eb d vwxghqw zlwk d JSD vrphzkhuh lq wkh pbvwhulrxv 2.zz udqjh — qreqrgB lv vxuh li kh'oo judgxdwh ru jhw d mre, exw dw ohdvw kh pdqdjhg wr eulqj wklv olwwoh iduplqj zruog wr olih. Wkdqnv iru wkh mrxuqhb, – klbr`
+
+the clue is hiding somewhere in the code find it 
+
 ## 1. Overview
 
 This project is a small 2D farming RPG prototype written in **Java** using **Swing** for rendering. You control a farmer in a tile-based world, till soil, plant and water crops, harvest them, and trade with a merchant.
@@ -410,4 +415,9 @@ The code is organized into several packages under `src/`.
   - A small **UI framework** built from scratch (labels, buttons, item slots, overlays).
   - External **data-driven design** using text files (`itemData.dat`, CSV tile maps).
 
+
 You can run the game following the commands in section **3.3** or via any Java IDE, then use this README as a guide to the mechanics and code structure during your evaluation or presentation.
+
+Clue:
+“To read the hidden message, shift each letter forward by 3.
+(Like harvesting letters — they grow when shifted.)”

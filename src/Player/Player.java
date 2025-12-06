@@ -21,6 +21,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class Player extends Entity {
+    // Reminder: most timers use 3 ticks for progression. Keep consistent.
+
     KeyHandler keyH = new KeyHandler();
     private boolean isMoving = false;
 
