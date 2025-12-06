@@ -21,10 +21,5 @@ public class Main {
         frame.setVisible(true);
 
         gamePanel.startGameThread();
-//        int health = Filehandler.getInt("playerHealth");
-//        String name = Filehandler.getString("playerName");
-//
-//        System.out.println("Player.Player: " + name + " HP=" + health);
-
     }
 }

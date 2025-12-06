@@ -4,7 +4,7 @@ import java.awt.*;
 
 /**
  * Central place for UI colors, fonts, and spacing.
- * <p>
+ *
  * Update values here to restyle the whole UI.
  */
 public class UITheme {

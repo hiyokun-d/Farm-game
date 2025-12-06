@@ -1,13 +1,13 @@
 package Screen;
 
-import NPC.BaseNPC;
 import Entity.CollisionChecker;
+import NPC.BaseNPC;
 import NPC.MerchantNPC;
 import Player.Player;
 import Tile.Render_Objects;
 import Tile.Render_tiles;
-import UI.UIContainer;
 import UI.Components.ShopUI;
+import UI.UIContainer;
 
 import javax.swing.*;
 import java.awt.*;
@@ -103,6 +103,10 @@ public class GamePanel extends JPanel implements Runnable {
 
         uiContainer.draw(g2);
 
+        g2.setColor(Color.darkGray);
+        String demo = "Made by hiyo, disclaimer: this is a demo";
+        int helpWidth = g2.getFontMetrics().stringWidth(demo);
+        g2.drawString(demo, (screenWidth - helpWidth) - 20, screenHeight - 10);
         g2.dispose();
     }
 
