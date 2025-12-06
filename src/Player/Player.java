@@ -66,8 +66,8 @@ public class Player extends Entity {
 //        this.worldX = Filehandler.getInt("playerX");
 //        this.worldY = Filehandler.getInt("playerY");
 
-        this.worldX = gp.tileSize * 18; // col 5
-        this.worldY = gp.tileSize * 19; // row 7
+        this.worldX = gp.tileSize * 41; // col 5
+        this.worldY = gp.tileSize * 22; // row 7
 
         this.speed = Filehandler.getInt("playerSpeed");
         this.gold = Filehandler.getInt("gold");

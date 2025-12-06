@@ -33,6 +33,21 @@ public class Render_tiles {
     public Tile[] boatTiles;
     public int[][] boatTileNum;
 
+    public Tile[] bridgeTiles;
+    public int[][] bridgeTileNum;
+
+    public Tile[] pathTiles;
+    public int[][] pathTileNum;
+
+    public Tile[] furnitureTiles;
+    public int[][] furnitureTileNum;
+
+    public Tile[] wallsTiles;
+    public int[][] wallsTileNum;
+
+    public Tile[] floorTiles;
+    public int[][] floorTileNum;
+
     public Render_tiles(GamePanel gp) throws IOException {
         this.gp = gp;
 
@@ -54,6 +69,21 @@ public class Render_tiles {
         boatTiles = new Tile[20];
         boatTileNum = new int[gp.maxWorldCol][gp.maxWorldRow];
 
+        bridgeTiles = new Tile[35];
+        bridgeTileNum = new int[gp.maxWorldCol][gp.maxWorldRow];
+
+        pathTiles = new Tile[50];
+        pathTileNum = new int[gp.maxWorldCol][gp.maxWorldRow];
+
+        furnitureTiles = new Tile[55];
+        furnitureTileNum = new int[gp.maxWorldCol][gp.maxWorldRow];
+
+        wallsTiles = new Tile[50];
+        wallsTileNum = new int[gp.maxWorldCol][gp.maxWorldRow];
+
+        floorTiles = new Tile[50];
+        floorTileNum = new int[gp.maxWorldCol][gp.maxWorldRow];
+
         for (int col = 0; col < gp.maxWorldCol; col++) {
             for (int row = 0; row < gp.maxWorldRow; row++) {
                 dirtTileNum[col][row] = 0; // start with no dirt
@@ -65,17 +95,27 @@ public class Render_tiles {
 
     private void setupTiles() throws IOException {
         loadTileSet("Water.png", "WATER", false, waterTiles, 0);
-        loadTileSet("Grass.png", "GRASS", true, grassTiles, 0);
+        loadTileSet("Hills.png", "GRASS", true, grassTiles, 0);
         loadTileSet("Bitmask_references 1.png", "SOLID_COLLISION", true, tiles, 1);
         loadTileSet("Tilled_Dirt_Wide.png", "SOIL", true, dirtTiles, 0);
         loadTileSet("Water.png", "LAKE", true, lakeTiles, 0);
         loadTileSet("Objects/boat.png", "BOAT", false, boatTiles, 0);
+        loadTileSet("Objects/Wood_Bridge.png", "BRIDGE", true, bridgeTiles, 0);
+        loadTileSet("Objects/Paths.png", "PATHS", true, pathTiles, 0);
+        loadTileSet("Objects/Basic_Furniture.png", "FURNITURE", true, furnitureTiles, 0);
+        loadTileSet("Wooden_House.png", "WALLS", true, wallsTiles, 0);
+        loadTileSet("Wooden_House.png", "FLOOR", true, floorTiles, 0);
 
         loadCSV("map_grass.csv", grassTileNum);
         loadCSV("map_water.csv", waterTileNum);
         loadCSV("map_solidCollision.csv", mapTileNum);
         loadCSV("map_lake.csv", lakeTileNum);
         loadCSV("map_boat.csv", boatTileNum);
+        loadCSV("map_bridge.csv", bridgeTileNum);
+        loadCSV("map_path.csv", pathTileNum);
+        loadCSV("map_House_furniture.csv", furnitureTileNum);
+        loadCSV("map_House_walls.csv", wallsTileNum);
+        loadCSV("map_House_Floor.csv", floorTileNum);
     }
 
 
@@ -177,7 +217,6 @@ public class Render_tiles {
         grassTileNum[col][row] = 12;// replace with grass tile index 1 (adjust if needed)
     }
 
-
     public void draw(Graphics2D g2) {
         for (int row = 0; row < gp.maxWorldRow; row++) {
             for (int col = 0; col < gp.maxWorldCol; col++) {
@@ -200,6 +239,11 @@ public class Render_tiles {
                 drawTile(g2, row, col, screenX, screenY, grassTiles, grassTileNum);
                 drawTile(g2, row, col, screenX, screenY, lakeTiles, lakeTileNum);
                 drawTile(g2, row, col, screenX, screenY, boatTiles, boatTileNum);
+                drawTile(g2, row, col, screenX, screenY, bridgeTiles, bridgeTileNum);
+                drawTile(g2, row, col, screenX, screenY, pathTiles, pathTileNum);
+                drawTile(g2, row, col, screenX, screenY, floorTiles, floorTileNum);
+                drawTile(g2, row, col, screenX, screenY, wallsTiles, wallsTileNum);
+                drawTile(g2, row, col, screenX, screenY, furnitureTiles, furnitureTileNum);
                 //------------------------------------------------------------------------------\\
 
             }
