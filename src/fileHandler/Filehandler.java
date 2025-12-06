@@ -111,6 +111,26 @@ public class Filehandler {
                             }
                         }
 
+                        // Watering system (tools like watering can)
+                        case "waterCapacity" -> {
+                            try {
+                                current.waterCapacity = Integer.parseInt(value);
+                                // If maxCapacity not explicitly set yet, default it to the starting capacity
+                                if (current.maxCapacity == 0) {
+                                    current.maxCapacity = current.waterCapacity;
+                                }
+                            } catch (NumberFormatException e) {
+                                System.err.println("Invalid water capacity buddy " + current.id + ": " + value);
+                            }
+                        }
+                        case "maxCapacity" -> {
+                            try {
+                                current.maxCapacity = Integer.parseInt(value);
+                            } catch (NumberFormatException e) {
+                                System.err.println("Invalid maxCapacity for item " + current.id + ": " + value);
+                            }
+                        }
+
                         // SEED
                         case "plantId" -> {
                             current.plantId = value;

@@ -8,6 +8,7 @@ public class KeyHandler implements KeyListener {
     public boolean upPressed, downPressed, leftPressed, rightPressed, escPressed, interactPressed;
     public boolean key1Pressed, key2Pressed, key3Pressed, key4Pressed, key5Pressed, key6Pressed, key7Pressed, key8Pressed, key9Pressed, key0Pressed;
     public boolean tabPressed;
+    public boolean enterPressed;
 
     @Override
     public void keyTyped(KeyEvent e) {
@@ -40,6 +41,9 @@ public class KeyHandler implements KeyListener {
                 break;
             case KeyEvent.VK_E:
                 interactPressed = true;
+                break;
+            case KeyEvent.VK_ENTER:
+                enterPressed = true;
                 break;
             case KeyEvent.VK_1:
                 key1Pressed = true;
@@ -103,6 +107,9 @@ public class KeyHandler implements KeyListener {
                 break;
             case KeyEvent.VK_E:
                 interactPressed = false;
+                break;
+            case KeyEvent.VK_ENTER:
+                enterPressed = false;
                 break;
             case KeyEvent.VK_1:
                 key1Pressed = false;

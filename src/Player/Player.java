@@ -46,7 +46,7 @@ public class Player extends Entity {
 
     // Simple currency used by merchants
     public int gold = 0;
-
+    public String interactionHint = "";
 //    public Item equippedItem = null;
 
     public Player(GamePanel gp, KeyHandler keyH) throws IOException {
@@ -175,6 +175,12 @@ public class Player extends Entity {
         int tileCol = (worldX + solidArea.x) / gp.tileSize;
         int tileRow = (worldY + solidArea.y) / gp.tileSize;
         return gp.renderingObjects.isHarvestable(tileCol, tileRow);
+    }
+
+    public boolean isWatered() {
+        int tileCol = (worldX + solidArea.x) / gp.tileSize;
+        int tileRow = (worldY + solidArea.y) / gp.tileSize;
+        return gp.renderingObjects.isWatered(tileCol, tileRow);
     }
 
     public String getSeedPlantId() {
@@ -321,6 +327,16 @@ public class Player extends Entity {
         UILabel goldLabel = new UILabel(10, 10, "Gold: " + gold, Color.YELLOW);
         gp.uiContainer.add(goldLabel);
 
+        // If the selected item is the watering can, show its capacity as text
+        if (selectedItemOnHotbar != null
+                && "TOOL".equals(selectedItemOnHotbar.data.type)
+                && "WATERING_CAN".equals(selectedItemOnHotbar.data.id)) {
+            int current = selectedItemOnHotbar.data.waterCapacity;
+            int max = selectedItemOnHotbar.data.maxCapacity > 0 ? selectedItemOnHotbar.data.maxCapacity : current;
+            UILabel waterLabel = new UILabel(10, 26, "Water: " + current + "/" + max, Color.CYAN);
+            gp.uiContainer.add(waterLabel);
+        }
+
         for (int i = 0; i < hotbar.size(); i++) {
 
             int x = baseX + i * (gp.tileSize + 8);
@@ -339,7 +355,13 @@ public class Player extends Entity {
                 }
                 icon = item.icon;
                 label = (icon == null && item.data != null) ? item.data.id : "";
-                quantity = item.quantity;
+
+                // For watering can, show remaining water as the stack number
+                if ("TOOL".equals(item.data.type) && "WATERING_CAN".equals(item.data.id)) {
+                    quantity = item.data.waterCapacity;
+                } else {
+                    quantity = item.quantity;
+                }
             }
 
             UIItemSlot slot = new UIItemSlot(
@@ -381,13 +403,69 @@ public class Player extends Entity {
             showInventory();
         }
 
+
+
         if (keyH.interactPressed) {
             keyH.interactPressed = false;
             isInteracting = true;
 
+            interactionHint = "";
             int tileCol = (worldX + solidArea.x) / gp.tileSize;
             int tileRow = (worldY + solidArea.y) / gp.tileSize;
             boolean hasCropHere = gp.renderingObjects.hasCropAt(tileCol, tileRow);
+            boolean cropWateredHere = hasCropHere && gp.renderingObjects.isWatered(tileCol, tileRow);
+
+            if (selectedItemOnHotbar != null && selectedItemOnHotbar.data != null) {
+                ItemData data = selectedItemOnHotbar.data;
+
+                // Refill hint when standing on lake with a not-full watering can
+                if ("LAKE".equals(standingOn)
+                        && "TOOL".equals(data.type)
+                        && "WATERING_CAN".equals(data.id)
+                        && data.waterCapacity < data.maxCapacity) {
+                    interactionHint = "Press E to refill watering can";
+                }
+                // Watering hint for dry crops
+                else if (hasCropHere && !isHarvestable()
+                        && "TOOL".equals(data.type)
+                        && "WATERING_CAN".equals(data.id)
+                        && !cropWateredHere
+                        && data.waterCapacity > 0) {
+                    interactionHint = "Press E to water crop";
+                }
+                // Harvest hint
+                else if (hasCropHere && isHarvestable()) {
+                    interactionHint = "Press E to harvest";
+                }
+                // Planting hint
+                else if ("SOIL".equals(standingOn)
+                        && "SEED".equals(data.type)
+                        && !hasCropHere) {
+                    interactionHint = "Press E to plant " + (data.name != null ? data.name : data.id);
+                }
+                // Hoeing hint
+                else if ("GRASS".equals(standingOn)
+                        && "TOOL".equals(data.type)
+                        && "HOE".equals(data.id)) {
+                    interactionHint = "Press E to till soil";
+                }
+                // Empty watering can general hint
+                else if ("TOOL".equals(data.type)
+                        && "WATERING_CAN".equals(data.id)
+                        && data.waterCapacity <= 0) {
+                    interactionHint = "Go stand in a lake tile to refill";
+                }
+            }
+
+            if (selectedItemOnHotbar != null
+                    && selectedItemOnHotbar.data != null
+                    && "LAKE".equals(standingOn)
+                    && "TOOL".equals(selectedItemOnHotbar.data.type)
+                    && "WATERING_CAN".equals(selectedItemOnHotbar.data.id)
+                    && selectedItemOnHotbar.data.waterCapacity < selectedItemOnHotbar.data.maxCapacity) {
+                selectedItemOnHotbar.data.waterCapacity = selectedItemOnHotbar.data.maxCapacity;
+                System.out.println("Refilled watering can to " + selectedItemOnHotbar.data.waterCapacity);
+            }
 
             if (selectedItemOnHotbar != null) {
                 ItemData data = selectedItemOnHotbar.data;
@@ -424,8 +502,17 @@ public class Player extends Entity {
                 // Only water if holding the watering can
                 if (selectedItemOnHotbar != null
                         && "TOOL".equals(selectedItemOnHotbar.data.type)
-                        && "WATERING_CAN".equals(selectedItemOnHotbar.data.id)) {
+                        && "WATERING_CAN".equals(selectedItemOnHotbar.data.id)
+                        && selectedItemOnHotbar.data.waterCapacity > 0 && !isWatered()) {
+
+                    int useAmount = 5; // how much water one action uses
+                    selectedItemOnHotbar.data.waterCapacity = Math.max(0, selectedItemOnHotbar.data.waterCapacity - useAmount);
+                    System.out.println("Watering... Remaining water: " + selectedItemOnHotbar.data.waterCapacity + "/" + selectedItemOnHotbar.data.maxCapacity);
                     wateredCrop();
+
+                    if (selectedItemOnHotbar.data.waterCapacity <= 0) {
+                        System.out.println("Your watering can is empty!");
+                    }
                 }
             } else if (hasCropHere && isHarvestable()) {
                 harvestCrop();
@@ -469,7 +556,19 @@ public class Player extends Entity {
         int screenX = worldX - gp.player.worldX + gp.player.screenX;
         int screenY = worldY - gp.player.worldY + gp.player.screenY;
 
-        g2.setColor(new Color(0, 177, 255, 255)); // yellow highlight
+        // Change outline color based on crop status for clearer feedback
+        Color outline = new Color(0, 177, 255, 255); // default highlight
+        if (gp.renderingObjects.hasCropAt(col, row)) {
+            if (gp.renderingObjects.isHarvestable(col, row)) {
+                outline = Color.YELLOW; // ready to harvest
+            } else if (gp.renderingObjects.isWatered(col, row)) {
+                outline = new Color(0, 120, 255); // watered crop
+            } else {
+                outline = new Color(140, 90, 40); // dry crop
+            }
+        }
+
+        g2.setColor(outline);
         g2.setStroke(new BasicStroke(3));
         g2.drawRect(screenX, screenY, gp.tileSize, gp.tileSize);
     }

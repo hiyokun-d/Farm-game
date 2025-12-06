@@ -236,8 +236,8 @@ public class Render_tiles {
                 //! regards THIS IS HIYO!!
                 drawTile(g2, row, col, screenX, screenY, waterTiles, waterTileNum, true);
                 drawTile(g2, row, col, screenX, screenY, dirtTiles, dirtTileNum);
-                drawTile(g2, row, col, screenX, screenY, grassTiles, grassTileNum);
                 drawTile(g2, row, col, screenX, screenY, lakeTiles, lakeTileNum);
+                drawTile(g2, row, col, screenX, screenY, grassTiles, grassTileNum);
                 drawTile(g2, row, col, screenX, screenY, boatTiles, boatTileNum);
                 drawTile(g2, row, col, screenX, screenY, bridgeTiles, bridgeTileNum);
                 drawTile(g2, row, col, screenX, screenY, pathTiles, pathTileNum);

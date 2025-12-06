@@ -12,8 +12,8 @@ name=Basic Watering Can
 icon_id=0
 stackable=false
 waterCapacity=20
+maxCapacity=20
 price=1000
-
 [CROP]
 id=WHEAT
 icon_id=5
@@ -22,7 +22,7 @@ seedId=WHEAT_SEED
 harvestId=WHEAT
 growthTimes=1000,2000,3000,4000
 stackable=true
-price=3500
+price=500
 
 [CROP]
 id=POTATO
@@ -32,7 +32,7 @@ seedId=POTATO_SEED
 harvestId=POTATO
 growthTimes=2000,3500,6000
 stackable=true
-price=4500
+price=700
 
 [SEED]
 id=WHEAT_SEED

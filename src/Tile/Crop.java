@@ -9,7 +9,7 @@ public class Crop extends Tile {
     public CropType type;
     public ItemData data;
 
-    public boolean isHarvestable = false, isWatered = true;
+    public boolean isHarvestable = false, isWatered = false;
     public int growthStage = 1, maxGrowthStage = 4;
     public BufferedImage[] growthImages = new BufferedImage[maxGrowthStage + 1];
 
@@ -48,7 +48,7 @@ public class Crop extends Tile {
         }
 
         // Require watering again for the next growth step
-//        isWatered = false;
+        isWatered = false;
     }
 
     public BufferedImage getCurrentImage() {

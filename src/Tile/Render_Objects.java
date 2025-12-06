@@ -50,6 +50,13 @@ public class Render_Objects {
     private void drawTile(Graphics2D g2, int row, int col, int screenX, int screenY) {
         Crop crop = cropsMap[col][row];
         if (crop == null) return;
+
+        // Draw a darker "soaked" box over the soil when the crop has been watered
+        if (crop.isWatered) {
+            g2.setColor(new Color(0, 0, 80, 120)); // subtle dark-blue overlay
+            g2.fillRect(screenX, screenY, gp.tileSize, gp.tileSize);
+        }
+
         g2.drawImage(crop.getCurrentImage(), screenX, screenY, gp.tileSize, gp.tileSize, null);
     }
 
@@ -103,6 +110,8 @@ public class Render_Objects {
         Crop crop = new Crop(type, type.startIndex);
         crop.data = ItemDatabase.get(plantItemId);
         crop.growthStage = 0; // Start from seed stage
+        crop.isWatered = false; // newly planted crops start dry
+        crop.lastGrowthTime = System.currentTimeMillis();
 
         // Copy growth stage images from the loaded tileset
         for (int i = 0; i < crop.maxGrowthStage + 1; i++) {
@@ -119,6 +128,7 @@ public class Render_Objects {
         Crop crop = cropsMap[col][row];
         if (crop != null) {
             crop.isWatered = true;
+            crop.lastGrowthTime = System.currentTimeMillis();
         }
     }
 
@@ -137,6 +147,11 @@ public class Render_Objects {
     public boolean isHarvestable(int col, int row) {
         Crop crop = cropsMap[col][row];
         return crop != null && crop.isHarvestable;
+    }
+
+    public boolean isWatered(int col, int row) {
+        Crop crop = cropsMap[col][row];
+        return crop != null && crop.isWatered;
     }
 
     public boolean hasCropAt(int col, int row) {

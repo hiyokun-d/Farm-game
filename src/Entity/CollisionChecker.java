@@ -140,15 +140,6 @@ public class CollisionChecker {
             }
         }
 
-        // Lake tiles should also block movement
-        int lakeIndex = gp.render_tiles.lakeTileNum[col][row];
-        if (lakeIndex > 0) {
-            Tile lakeTile = gp.render_tiles.lakeTiles[lakeIndex];
-            if (lakeTile != null && lakeTile.collision) {
-                entity.collisionOn = true;
-            }
-        }
-
         // Crops block movement so the player cannot walk through planted crops
         int cropsIndex = gp.renderingObjects.cropsTileNum[col][row];
         if (cropsIndex > 0) {
