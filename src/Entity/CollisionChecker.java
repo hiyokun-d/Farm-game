@@ -70,10 +70,15 @@ public class CollisionChecker {
 
         if (col < 0 || col >= gp.maxWorldCol || row < 0 || row >= gp.maxWorldRow) return;
 
+        //! JANCOOOOOOOOOOKKKKKKKKKKKKKKKKKKKKK GW PUSING!!!! DEBUGGING MULU KAGAK KELAR KELAR ANJENGGG
+
         int grassIndex = gp.render_tiles.grassTileNum[col][row];
         int dirtIndex = gp.render_tiles.dirtTileNum[col][row];
         int cropsIndex = gp.renderingObjects.cropsTileNum[col][row];
         int lakeIndex = gp.render_tiles.lakeTileNum[col][row];
+        int floorIndex = gp.render_tiles.floorTileNum[col][row];
+        int bridgeIndex = gp.render_tiles.bridgeTileNum[col][row];
+        int pathIndex = gp.render_tiles.pathTileNum[col][row];
 
         // Base ground
         if (grassIndex > 0) {
@@ -96,6 +101,21 @@ public class CollisionChecker {
         if (lakeIndex > 0) {
             Tile lakeTile = gp.render_tiles.lakeTiles[lakeIndex];
             if (lakeTile != null) entity.standingOn = lakeTile.id;
+        }
+
+        if(floorIndex > 0) {
+            Tile floorTile = gp.render_tiles.floorTiles[floorIndex];
+            if(floorTile != null) entity.standingOn = floorTile.id;
+        }
+
+        if(pathIndex > 0) {
+            Tile pathTile = gp.render_tiles.pathTiles[pathIndex];
+            if(pathTile != null) entity.standingOn = pathTile.id;
+        }
+
+        if(bridgeIndex > 0) {
+            Tile bridgeTile = gp.render_tiles.bridgeTiles[bridgeIndex];
+            if(bridgeTile != null) entity.standingOn = bridgeTile.id;
         }
     }
 
