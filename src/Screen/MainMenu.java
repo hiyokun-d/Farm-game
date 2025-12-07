@@ -1,5 +1,7 @@
 package Screen;
 
+import UI.TransitionManager;
+
 import java.awt.*;
 
 public class MainMenu {
@@ -119,47 +121,77 @@ public class MainMenu {
     }
 
     public void drawCreditsMenu(Graphics2D g2) {
-        g2.setColor(new Color(15, 15, 40));
+        // Background fade
+        g2.setColor(new Color(10, 10, 25));
         g2.fillRect(0, 0, gp.screenWidth, gp.screenHeight);
 
-        g2.setFont(new Font("Arial", Font.BOLD, 32));
-        g2.setColor(Color.WHITE);
-        String title = "CREDITS";
-        int titleWidth = g2.getFontMetrics().stringWidth(title);
-        g2.drawString(title, (gp.screenWidth - titleWidth) / 2, 80);
+        // Glass panel
+        g2.setColor(new Color(255, 255, 255, 30));
+        g2.fillRoundRect(
+                gp.screenWidth / 4,
+                gp.screenHeight / 8,
+                gp.screenWidth / 2,
+                (int) (gp.screenHeight / 1.4f),
+                20, 20
+        );
 
-        // List of names (edit this freely)
+        g2.setColor(Color.WHITE);
+        g2.setFont(new Font("Serif", Font.BOLD, 32));
+
+        String title = "C R E D I T S";
+        int tw = g2.getFontMetrics().stringWidth(title);
+        g2.drawString(title,
+                (gp.screenWidth - tw) / 2,
+                gp.screenHeight / 8 + 50
+        );
+
+        // Names
         String[] names = {
                 "HK Studio",
-                "Team Members:",
-                " - Muh. Daffa Dwi Syahreza (Hiyo)",
-                " - Vincent Rivaldo",
-                " - Louis Dominic",
                 "",
-                "Special thanks to:",
-                " - Cup Nooble (we use their assets)",
+                "Team Members:",
+                " • Muh. Daffa Dwi Syahreza",
+                " • Vincent Rivaldo",
+                " • Louis Dominic",
+                "",
+                "Special Thanks:",
+                " • Cup Nooble (Assets Pack)",
+                " • And also toto (the toilet)"
         };
 
         g2.setFont(new Font("Arial", Font.PLAIN, 20));
-        int y = 140;
-        for (String name : names) {
-            int w = g2.getFontMetrics().stringWidth(name);
-            g2.drawString(name, (gp.screenWidth - w) / 2, y);
-            y += 30;
+
+        int y = gp.screenHeight / 8 + 120;
+        for (String n : names) {
+            int w = g2.getFontMetrics().stringWidth(n);
+            g2.drawString(n, (gp.screenWidth - w) / 2, y);
+            y += 28;
         }
 
-        // Back button
-        String backText = "Press ENTER to go back";
-        int bw = g2.getFontMetrics().stringWidth(backText);
-        g2.drawString(backText, (gp.screenWidth - bw) / 2, gp.screenHeight - 60);
+        // Back hint
+        String back = "Press ENTER to return";
+        int bw = g2.getFontMetrics().stringWidth(back);
+        g2.setColor(new Color(200, 200, 255));
+        g2.drawString(back,
+                (gp.screenWidth - bw) / 2,
+                gp.screenHeight - 60
+        );
+
     }
 
     public void activateMainMenuSelection() {
         switch (mainMenuSelectedIndex) {
             case 0 -> gp.inMainMenu = false; // Play
+
             case 1 -> {
+                gp.transition.start(
+                        TransitionManager.Type.FADE_BLACK,
+                        0.03f,
+                        () -> System.out.println("Secret menu unlocked!")
+                );
                 gp.inMainMenu = false;
                 gp.inCreditMenu = true;
+
             }
             case 2 -> System.out.println("Random option selected (placeholder).");
         }

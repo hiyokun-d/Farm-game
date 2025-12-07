@@ -79,6 +79,9 @@ public class CollisionChecker {
         int floorIndex = gp.render_tiles.floorTileNum[col][row];
         int bridgeIndex = gp.render_tiles.bridgeTileNum[col][row];
         int pathIndex = gp.render_tiles.pathTileNum[col][row];
+        int doorIndex = gp.render_tiles.doorsTileNum[col][row];
+        int bedIndex = gp.render_tiles.bedTileNum[col][row];
+        int boatIndex = gp.render_tiles.boatTileNum[col][row];
 
         // Base ground
         if (grassIndex > 0) {
@@ -103,19 +106,34 @@ public class CollisionChecker {
             if (lakeTile != null) entity.standingOn = lakeTile.id;
         }
 
-        if(floorIndex > 0) {
+        if (floorIndex > 0) {
             Tile floorTile = gp.render_tiles.floorTiles[floorIndex];
-            if(floorTile != null) entity.standingOn = floorTile.id;
+            if (floorTile != null) entity.standingOn = floorTile.id;
         }
 
-        if(pathIndex > 0) {
+        if (pathIndex > 0) {
             Tile pathTile = gp.render_tiles.pathTiles[pathIndex];
-            if(pathTile != null) entity.standingOn = pathTile.id;
+            if (pathTile != null) entity.standingOn = pathTile.id;
         }
 
-        if(bridgeIndex > 0) {
+        if (bridgeIndex > 0) {
             Tile bridgeTile = gp.render_tiles.bridgeTiles[bridgeIndex];
-            if(bridgeTile != null) entity.standingOn = bridgeTile.id;
+            if (bridgeTile != null) entity.standingOn = bridgeTile.id;
+        }
+
+        if (doorIndex > 0) {
+            Tile doorTile = gp.render_tiles.doorsTile[doorIndex];
+            if (doorTile != null) entity.standingOn = doorTile.id;
+        }
+
+        if(bedIndex > 0) {
+            Tile bedTile = gp.render_tiles.bedTiles[bedIndex];
+            if(bedTile != null) entity.standingOn = bedTile.id;
+        }
+
+        if(boatIndex > 0) {
+            Tile boatTile = gp.render_tiles.boatTiles[boatIndex];
+            if(boatTile != null) entity.standingOn = boatTile.id;
         }
     }
 
@@ -139,6 +157,13 @@ public class CollisionChecker {
                 entity.collisionOn = true;
             }
         }
+
+//        int doorIndex = gp.render_tiles.doorsTileNum[col][row];
+//        if(tileIndex >= 0) {
+//            Tile doorTile = gp.render_tiles.doorsTile[doorIndex];
+//            if(doorTile != null && "DOOR_CLOSED".equals(doorTile.id))
+//                entity.collisionOn = true;
+//        }
 
         // Crops block movement so the player cannot walk through planted crops
         int cropsIndex = gp.renderingObjects.cropsTileNum[col][row];

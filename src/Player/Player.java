@@ -5,8 +5,10 @@ import Inventory.Item;
 import NPC.BaseNPC;
 import Screen.GamePanel;
 import Screen.KeyHandler;
+import Tile.Tile;
 import UI.Components.UIItemSlot;
 import UI.Components.UILabel;
+import UI.TransitionManager;
 import UI.UIComponent;
 import fileHandler.Filehandler;
 import fileHandler.ItemData;
@@ -49,6 +51,8 @@ public class Player extends Entity {
     // Simple currency used by merchants
     public int gold = 0;
     public String interactionHint = "";
+    public int days = 0; // the days of the players been playing
+
 //    public Item equippedItem = null;
 
     public Player(GamePanel gp, KeyHandler keyH) throws IOException {
@@ -73,6 +77,7 @@ public class Player extends Entity {
 
         this.speed = Filehandler.getInt("playerSpeed");
         this.gold = Filehandler.getInt("gold");
+        this.days = Filehandler.getInt("days");
 
         this.width = 35;
         this.height = 35;
@@ -380,6 +385,16 @@ public class Player extends Entity {
         }
     }
 
+    public void sleep() {
+        canMove = false;
+        gp.transition.start(TransitionManager.Type.WIPE_VERTICAL, 0.03f, () -> {
+            days += 1;
+            canMove = true;
+            gp.renderingObjects.updatePlantGrowth();
+            gp.transition.start(TransitionManager.Type.WIPE_HORIZONTAL, 0.02f, null);
+        });
+    }
+
     public void update() {
         hoverCol = (worldX + solidArea.x) / gp.tileSize;
         hoverRow = (worldY + solidArea.y) / gp.tileSize;
@@ -406,10 +421,12 @@ public class Player extends Entity {
         }
 
 
-
         if (keyH.interactPressed) {
             keyH.interactPressed = false;
             isInteracting = true;
+
+            if (standingOn.equals("BED"))
+                sleep();
 
             interactionHint = "";
             int tileCol = (worldX + solidArea.x) / gp.tileSize;
@@ -586,6 +603,14 @@ public class Player extends Entity {
         int maxDistance = gp.tileSize; // within 1 tile range
 
         return dx <= maxDistance && dy <= maxDistance;
+    }
+
+    // to render how much days been waste in the game
+    public void drawDays(Graphics2D g2) {
+        g2.setColor(Color.BLUE);
+        String DaysGame = "Days: " + days;
+        int helpWidth = g2.getFontMetrics().stringWidth(DaysGame);
+        g2.drawString(DaysGame, (gp.screenWidth - helpWidth) - 20, 20);
     }
 
     public void draw(Graphics2D g2) {

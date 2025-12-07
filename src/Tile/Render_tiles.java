@@ -50,6 +50,12 @@ public class Render_tiles {
     public Tile[] floorTiles;
     public int[][] floorTileNum;
 
+    public Tile[] doorsTile;
+    public int[][] doorsTileNum;
+
+    public Tile[] bedTiles;
+    public int[][] bedTileNum;
+
     public Render_tiles(GamePanel gp) throws IOException {
         this.gp = gp;
 
@@ -86,6 +92,14 @@ public class Render_tiles {
         floorTiles = new Tile[50];
         floorTileNum = new int[gp.maxWorldCol][gp.maxWorldRow];
 
+        // Doors tileset: allocate enough space for all possible door tiles.
+        // Using a generous upper bound to avoid index issues when slicing the tileset.
+        doorsTile = new Tile[100];
+        doorsTileNum = new int[gp.maxWorldCol][gp.maxWorldRow];
+
+        bedTiles = new Tile[55];
+        bedTileNum = new int[gp.maxWorldCol][gp.maxWorldRow];
+
         for (int col = 0; col < gp.maxWorldCol; col++) {
             for (int row = 0; row < gp.maxWorldRow; row++) {
                 dirtTileNum[col][row] = 0; // start with no dirt
@@ -107,6 +121,8 @@ public class Render_tiles {
         loadTileSet("Objects/Basic_Furniture.png", "FURNITURE", true, furnitureTiles, 0);
         loadTileSet("Wooden_House.png", "WALLS", true, wallsTiles, 0);
         loadTileSet("Wooden_House.png", "FLOOR", true, floorTiles, 0);
+        loadTileSet("Doors.png", "DOOR_CLOSED", true, doorsTile, 0);
+        loadTileSet("Objects/Basic_Furniture.png", "BED", true, bedTiles, 0);
 
         loadCSV("map_grass.csv", grassTileNum);
         loadCSV("map_water.csv", waterTileNum);
@@ -118,6 +134,9 @@ public class Render_tiles {
         loadCSV("map_House_furniture.csv", furnitureTileNum);
         loadCSV("map_House_walls.csv", wallsTileNum);
         loadCSV("map_House_Floor.csv", floorTileNum);
+        // Load separate maps for doors and beds
+        loadCSV("map_House_door.csv", doorsTileNum);
+        loadCSV("map_House_bed.csv", bedTileNum);
     }
 
 
@@ -198,15 +217,27 @@ public class Render_tiles {
         }
     }
 
-    private void drawTile(Graphics2D g2, int row, int col, int screenX, int screenY, Tile[] tileArr, int[][] tilenum, boolean drawZero) {
+    private void drawTile(Graphics2D g2, int row, int col, int screenX, int screenY,
+                           Tile[] tileArr, int[][] tilenum, boolean drawZero) {
         int tileIndex = tilenum[col][row];
-        g2.drawImage(tileArr[tileIndex].image, screenX, screenY, gp.tileSize, gp.tileSize, null);
+
+        // Guard against bad indices or missing tiles to avoid crashes while rendering
+        if (tileIndex < 0 || tileArr == null || tileIndex >= tileArr.length) {
+            return;
+        }
+
+        if (!drawZero && tileIndex == 0) return;
+
+        Tile tile = tileArr[tileIndex];
+        if (tile == null || tile.image == null) return;
+
+        g2.drawImage(tile.image, screenX, screenY, gp.tileSize, gp.tileSize, null);
     }
 
-    private void drawTile(Graphics2D g2, int row, int col, int screenX, int screenY, Tile[] tileArr, int[][] tilenum) {
-        int tileIndex = tilenum[col][row];
-        if (tileIndex == 0) return;
-        g2.drawImage(tileArr[tileIndex].image, screenX, screenY, gp.tileSize, gp.tileSize, null);
+    private void drawTile(Graphics2D g2, int row, int col, int screenX, int screenY,
+                           Tile[] tileArr, int[][] tilenum) {
+        // Default behaviour: do not draw tile index 0
+        drawTile(g2, row, col, screenX, screenY, tileArr, tilenum, false);
     }
 
     public void convertGrassToDirtTile(int col, int row) {
@@ -245,7 +276,9 @@ public class Render_tiles {
                 drawTile(g2, row, col, screenX, screenY, pathTiles, pathTileNum);
                 drawTile(g2, row, col, screenX, screenY, floorTiles, floorTileNum);
                 drawTile(g2, row, col, screenX, screenY, wallsTiles, wallsTileNum);
+                drawTile(g2, row, col, screenX, screenY, doorsTile, doorsTileNum);
                 drawTile(g2, row, col, screenX, screenY, furnitureTiles, furnitureTileNum);
+                drawTile(g2, row, col, screenX, screenY, bedTiles, bedTileNum);
                 //------------------------------------------------------------------------------\\
 
             }

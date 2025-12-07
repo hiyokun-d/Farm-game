@@ -7,6 +7,7 @@ import Player.Player;
 import Tile.Render_Objects;
 import Tile.Render_tiles;
 import UI.Components.ShopUI;
+import UI.TransitionManager;
 import UI.UIContainer;
 import com.sun.tools.javac.Main;
 
@@ -48,7 +49,7 @@ public class GamePanel extends JPanel implements Runnable {
     public Render_Objects renderingObjects = new Render_Objects(this);
 
     public Player player = new Player(this, keyH);
-
+    public TransitionManager transition = new TransitionManager();
     public UIContainer uiContainer = new UIContainer();
 
     // List of all NPCs in the world (currently just the merchant)
@@ -101,6 +102,7 @@ public class GamePanel extends JPanel implements Runnable {
 
     public void update() {
         uiContainer.update();
+        transition.update();
 
         // MAIN MENU STATE: handle navigation & selection
         if (inMainMenu) {
@@ -111,7 +113,7 @@ public class GamePanel extends JPanel implements Runnable {
             return;
         }
 
-        renderingObjects.updatePlantGrowth();
+//        renderingObjects.updatePlantGrowth();
 
         for (BaseNPC npc : npcs) {
             npc.update();
@@ -123,6 +125,7 @@ public class GamePanel extends JPanel implements Runnable {
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
+
 
         if (inMainMenu) {
             mainMenu.drawMainMenu(g2);
@@ -143,10 +146,13 @@ public class GamePanel extends JPanel implements Runnable {
             npc.draw(g2);
         }
 
+        player.drawDays(g2);
         player.drawTileOutline(g2, player.hoverRow, player.hoverCol);
         player.draw(g2);
 
         uiContainer.draw(g2);
+
+        transition.draw(g2, screenWidth, screenHeight);
 
         g2.setColor(Color.darkGray);
         String demo = "Made by hiyo, disclaimer: this is a demo";
