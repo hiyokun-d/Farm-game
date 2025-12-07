@@ -12,8 +12,9 @@ name=Basic Watering Can
 icon_id=0
 stackable=false
 waterCapacity=20
-maxCapacity=20
+maxCapacity=100
 price=1000
+
 [CROP]
 id=WHEAT
 icon_id=5
