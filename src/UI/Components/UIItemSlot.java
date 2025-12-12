@@ -60,7 +60,7 @@ public class UIItemSlot extends UIComponent {
         if (icon != null) {
             g2.drawImage(icon, x + 4, y + 4, size - 8, size - 8, null);
         } else if (label != null && !label.isEmpty()) {
-            g2.setFont(UITheme.FONT_SMALL);
+            g2.setFont(UITheme.FONT_SMALL());
             g2.setColor(UITheme.TEXT_PRIMARY);
             FontMetrics fm = g2.getFontMetrics();
             int textWidth = fm.stringWidth(label);
@@ -72,7 +72,7 @@ public class UIItemSlot extends UIComponent {
         // Quantity overlay (bottom-right)
         if (quantity > 1) {
             String q = String.valueOf(quantity);
-            g2.setFont(UITheme.FONT_SMALL);
+            g2.setFont(UITheme.FONT_SMALL());
             FontMetrics fm = g2.getFontMetrics();
             int textWidth = fm.stringWidth(q);
             int textHeight = fm.getHeight();

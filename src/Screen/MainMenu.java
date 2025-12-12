@@ -1,8 +1,11 @@
 package Screen;
 
 import UI.TransitionManager;
+import UI.UITheme;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 
 public class MainMenu {
     GamePanel gp;
@@ -12,31 +15,57 @@ public class MainMenu {
     public boolean mainMenuMouseClicked = false;
     public boolean lastMenuUp = false, lastMenuDown = false, lastMenuEnter = false;
 
+    public BufferedImage logo;
+
     public MainMenu(GamePanel gp) {
         this.gp = gp;
+
+        try {
+            logo = ImageIO.read(getClass().getResourceAsStream("/resources/logo.png"));
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("⚠ Failed to load logo image!");
+        }
     }
 
     public void drawMainMenu(Graphics2D g2) {
         // Background
-        g2.setColor(new Color(10, 10, 30));
+        GradientPaint gpnt = new GradientPaint(
+                0, 0, new Color(26, 46, 58),      // top
+                0, gp.screenHeight, new Color(12, 26, 36)  // bottom
+        );
+        g2.setPaint(gpnt);
         g2.fillRect(0, 0, gp.screenWidth, gp.screenHeight);
 
         // Title
-        g2.setColor(Color.WHITE);
-        g2.setFont(new Font("Arial", Font.BOLD, 36));
-        String title = "LIL GUY FARM!";
-        int titleWidth = g2.getFontMetrics().stringWidth(title);
-        g2.drawString(title, (gp.screenWidth - titleWidth) / 2, gp.screenHeight / 3);
+        if (logo != null) {
+            int logoWidth = logo.getWidth() * 3;   // scale ×3 (change if needed)
+            int logoHeight = logo.getHeight() * 3;
+
+            int logoX = (gp.screenWidth - logoWidth) / 2;
+            int logoY = gp.screenHeight / 40 - 95;  // top area
+
+            g2.drawImage(logo, logoX, logoY, logoWidth, logoHeight, null);
+
+        } else {
+            System.out.println("The game logo isn't found so can't be rendered correctly");
+            g2.setColor(Color.WHITE);
+            g2.setFont(UITheme.FONT_TITLE().deriveFont(25f));
+            String title = "BUDGET HARVEST";
+            int titleWidth = g2.getFontMetrics().stringWidth(title);
+            g2.drawString(title, (gp.screenWidth - titleWidth) / 2, gp.screenHeight / 3);
+        }
 
         // Subtitle / hint
-        g2.setFont(new Font("Arial", Font.PLAIN, 18));
+        g2.setFont(UITheme.FONT_SMALL().deriveFont(15f));
         String hint = "Press ENTER or click a button";
         int hintWidth = g2.getFontMetrics().stringWidth(hint);
-        g2.drawString(hint, (gp.screenWidth - hintWidth) / 2, gp.screenHeight / 3 + 40);
+        g2.setColor(Color.white);
+        g2.drawString(hint, (gp.screenWidth - hintWidth) / 2, gp.screenHeight / 2 + 135);
 
         // Menu buttons
         Rectangle[] buttons = getMainMenuButtonBounds();
-        g2.setFont(new Font("Arial", Font.PLAIN, 20));
+        g2.setFont(UITheme.FONT_DEFAULT());
         FontMetrics fm = g2.getFontMetrics();
 
         for (int i = 0; i < buttons.length; i++) {
@@ -114,15 +143,21 @@ public class MainMenu {
 
     public void updateCreditsMenu() {
         if (gp.keyH.enterPressed) {
-            gp.keyH.enterPressed = false;
-            gp.inCreditMenu = false;
-            gp.inMainMenu = true;
+            gp.transition.start(TransitionManager.Type.WIPE_HORIZONTAL, 0.05f, () -> {
+                gp.keyH.enterPressed = false;
+                gp.inCreditMenu = false;
+                gp.inMainMenu = true;
+            });
         }
     }
 
     public void drawCreditsMenu(Graphics2D g2) {
         // Background fade
-        g2.setColor(new Color(10, 10, 25));
+        GradientPaint gpnt = new GradientPaint(
+                0, 0, new Color(34, 131, 89),      // top
+                0, gp.screenHeight, new Color(11, 105, 86)  // bottom
+        );
+        g2.setPaint(gpnt);
         g2.fillRect(0, 0, gp.screenWidth, gp.screenHeight);
 
         // Glass panel
@@ -136,7 +171,7 @@ public class MainMenu {
         );
 
         g2.setColor(Color.WHITE);
-        g2.setFont(new Font("Serif", Font.BOLD, 32));
+        g2.setFont(UITheme.FONT_TITLE());
 
         String title = "C R E D I T S";
         int tw = g2.getFontMetrics().stringWidth(title);
@@ -159,7 +194,7 @@ public class MainMenu {
                 " • And also toto (the toilet)"
         };
 
-        g2.setFont(new Font("Arial", Font.PLAIN, 20));
+        g2.setFont(UITheme.FONT_DEFAULT());
 
         int y = gp.screenHeight / 8 + 120;
         for (String n : names) {
@@ -181,16 +216,24 @@ public class MainMenu {
 
     public void activateMainMenuSelection() {
         switch (mainMenuSelectedIndex) {
-            case 0 -> gp.inMainMenu = false; // Play
+            case 0 -> {
+                gp.transition.start(
+                        TransitionManager.Type.WIPE_HORIZONTAL,
+                        0.03f,
+                        () -> {
+                            gp.inMainMenu = false; // Play
+                        });
+            }
 
             case 1 -> {
                 gp.transition.start(
-                        TransitionManager.Type.FADE_BLACK,
+                        TransitionManager.Type.WIPE_HORIZONTAL,
                         0.03f,
-                        () -> System.out.println("Secret menu unlocked!")
+                        () -> {
+                            gp.inMainMenu = false;
+                            gp.inCreditMenu = true;
+                        }
                 );
-                gp.inMainMenu = false;
-                gp.inCreditMenu = true;
 
             }
             case 2 -> System.out.println("Random option selected (placeholder).");

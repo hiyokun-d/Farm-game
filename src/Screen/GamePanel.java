@@ -91,7 +91,7 @@ public class GamePanel extends JPanel implements Runnable {
         npcs.add(new MerchantNPC(
                 this,
                 "Merchant",
-                tileSize * 50,
+                tileSize * 49,
                 tileSize * 24,
                 new String[]{
                         "Welcome!",
@@ -129,10 +129,12 @@ public class GamePanel extends JPanel implements Runnable {
 
         if (inMainMenu) {
             mainMenu.drawMainMenu(g2);
+            transition.draw(g2, screenWidth, screenHeight);
             g2.dispose();
             return;
         } else if(inCreditMenu) {
             mainMenu.drawCreditsMenu(g2);
+            transition.draw(g2, screenWidth, screenHeight);
             g2.dispose();
             return;
         }

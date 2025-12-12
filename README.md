@@ -1,5 +1,7 @@
 # RPG Farm – Student Farming RPG Prototype
 
+![Game Logo](assets/docs/resources/logo.png)
+
 funfact: 
 `Wklv jdph zdv fuhdwhg eb d vwxghqw zlwk d JSD vrphzkhuh lq wkh pbvwhulrxv 2.zz udqjh — qreqrgB lv vxuh li kh'oo judgxdwh ru jhw d mre, exw dw ohdvw kh pdqdjhg wr eulqj wklv olwwoh iduplqj zruog wr olih. Wkdqnv iru wkh mrxuqhb, – klbr`
 
@@ -14,29 +16,44 @@ This project is a small 2D farming RPG prototype written in **Java** using **Swi
 > and this one cause of the i'm to lazy to write the markdown i'll give the AI for this one, pls don't be mad at me 
 ---
 
-## 2. Screenshots & Logo (placeholders)
+## 2. Screenshots
 
-Your lecturer will probably want to see what the game looks like. Replace the image paths below with your actual files.
-
-### Game Logo
-
-```text
-TODO: place your logo file in e.g. `assets/docs/logo.png` and update the path below.
-```
-
-```markdown
-![Game Logo](assets/docs/logo.png)
-```
+![Game Logo](assets/docs/resources/logo.png)
 
 ### Gameplay Screenshot
 
-```text
-TODO: take an in‑game screenshot (player, farm, crops, UI) and save it as e.g. `assets/docs/screenshot-gameplay.png`, then update the path below.
-```
+the thing that you'll find first in the game
+![Main-menu](assets/docs/resources/screenshot/main=menu.png)
 
-```markdown
-![Gameplay Screenshot](assets/docs/screenshot-gameplay.png)
-```
+if you press play you'll be spawn at this house
+![first-gameplay](assets/docs/resources/screenshot/first-gameplay.png)
+
+and first thing first that you wanna do is go to the shop that on the right side beside the boat
+![shop-menu](assets/docs/resources/screenshot/shop.png)
+if you want to buy anything just go to the joko (our merchant shop) make sure you have enough of gold
+
+done shopping? let's plant something (to interact with **ANYTHING** we use E)
+![crop-plant](assets/docs/resources/screenshot/crop-plant.png)
+
+don't forget to watered your plants
+![crop-watered](assets/docs/resources/screenshot/crop-watered.png)
+
+and after planting the crops, just go sleep cause that's all you can do (for now, it's prototype remember?)
+![sleep](assets/docs/resources/screenshot/sleep.png)
+press E to sleep here don't act stupid
+
+after you sleep don't forget to watered your plant again, because we already use the water, then refill it on the lake (it's on the bottom side of the map)
+![refilling](assets/docs/resources/screenshot/water-refill.png)
+
+after three days your plant should be ready to harvest, just go and harvest it all
+![harvest-crop](assets/docs/resources/screenshot/harvesting-crop.png)
+
+done harvesting? go sell it again to the merchant, he really love the plant that you give em
+![selling-crop](assets/docs/resources/screenshot/selling-menu.png)
+there's no saving mechanism YET, cause we have no time, so am sorry bout that
+
+here's our credit menu
+![credit-menu](assets/docs/resources/screenshot/credit.png)
 
 ---
 
@@ -85,6 +102,11 @@ java -cp out Main
 4. Run the project.
 
 This should open a window titled **"RPG game"** (or **"RPG Farm"** from the main menu), showing either the main menu or the game world.
+
+### 3.5 Running from the `.jar
+1. go to the `Budget-harvest` directory
+2. and then open terminal, make sure your directory is correct and contain our `.jar` and `data&assets`
+3. run `java -jar budgetHarvest.jar` and play it
 
 ---
 

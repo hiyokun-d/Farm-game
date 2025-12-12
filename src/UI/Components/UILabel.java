@@ -13,7 +13,7 @@ public class UILabel extends UIComponent {
 
     public String text;
     public Color color;
-    public Font font = UITheme.FONT_DEFAULT;
+    public Font font = UITheme.FONT_DEFAULT();
     public String setAlign = "TOP-LEFT"; // CENTER, TOP-LEFT, TOP-CENTER, TOP-RIGHT, BOTTOM-LEFT, BOTTOM-CENTER, BOTTOM-RIGHT
 
     public UILabel(int x, int y, String text, Color color) {

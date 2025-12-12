@@ -29,7 +29,7 @@ public class UIButton extends UIComponent {
         g2.fillRect(x, y, width, height);
 
         g2.setColor(textColor);
-        g2.setFont(UITheme.FONT_DEFAULT);
+        g2.setFont(UITheme.FONT_DEFAULT());
         FontMetrics metrics = g2.getFontMetrics();
         int textWidth = metrics.stringWidth(label);
         int textHeight = metrics.getHeight();

@@ -225,7 +225,7 @@ public class ShopUI extends UIComponent {
         g2.drawRoundRect(panelX, panelY, panelWidth, panelHeight, 16, 16);
 
         // Header
-        g2.setFont(UITheme.FONT_TITLE);
+        g2.setFont(UITheme.FONT_TITLE().deriveFont(15f));
         String title = "Merchant Shop";
         String goldText = "Gold: " + player.gold;
         FontMetrics fm = g2.getFontMetrics();
@@ -236,7 +236,7 @@ public class ShopUI extends UIComponent {
         g2.drawString(title, panelX + 20, headerY);
         g2.drawString(goldText, panelX + panelWidth - goldWidth - 20, headerY);
 
-        g2.setFont(UITheme.FONT_DEFAULT);
+        g2.setFont(UITheme.FONT_DEFAULT());
         fm = g2.getFontMetrics();
 
         // Tabs (BUY / SELL)
@@ -311,7 +311,7 @@ public class ShopUI extends UIComponent {
 
                 // Text: name and price
                 g2.setColor(UITheme.TEXT_PRIMARY);
-                g2.setFont(UITheme.FONT_DEFAULT);
+                g2.setFont(UITheme.FONT_DEFAULT());
                 String nameText = data.name != null ? data.name : data.id;
                 String priceText = data.price + "g";
 
@@ -383,7 +383,7 @@ public class ShopUI extends UIComponent {
 
                     // Text: name and price
                     g2.setColor(UITheme.TEXT_PRIMARY);
-                    g2.setFont(UITheme.FONT_DEFAULT);
+                    g2.setFont(UITheme.FONT_DEFAULT());
                     String nameText = item.data.name != null ? item.data.name : item.data.id;
                     String priceText = item.data.price + "g";
 
@@ -413,6 +413,7 @@ public class ShopUI extends UIComponent {
         g2.setColor(UITheme.TEXT_MUTED);
         String help = "W/S: Move  A/D: Switch tab  E: Buy/Sell  ESC: Close";
         int helpWidth = fm.stringWidth(help);
-        g2.drawString(help, panelX + (panelWidth - helpWidth) / 2, panelY + panelHeight - 20);
+        g2.setFont(UITheme.FONT_SMALL());
+        g2.drawString(help, panelX + (panelWidth - helpWidth)/ 4 + 185, panelY + panelHeight - 20);
     }
 }
