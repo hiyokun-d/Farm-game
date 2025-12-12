@@ -61,7 +61,7 @@ public class MainMenu {
         String hint = "Press ENTER or click a button";
         int hintWidth = g2.getFontMetrics().stringWidth(hint);
         g2.setColor(Color.white);
-        g2.drawString(hint, (gp.screenWidth - hintWidth) / 2, gp.screenHeight / 2 + 135);
+        g2.drawString(hint, (gp.screenWidth - hintWidth) / 2, gp.screenHeight / 2 + 175);
 
         // Menu buttons
         Rectangle[] buttons = getMainMenuButtonBounds();
@@ -93,7 +93,7 @@ public class MainMenu {
         int buttonHeight = gp.tileSize + 8;
         int startX = (gp.screenWidth - buttonWidth) / 2;
         int totalHeight = buttonCount * buttonHeight + (buttonCount - 1) * 10;
-        int startY = gp.screenHeight / 2 - totalHeight / 2;
+        int startY = gp.screenHeight / 2 - totalHeight / 3;
 
         Rectangle[] rects = new Rectangle[buttonCount];
         for (int i = 0; i < buttonCount; i++) {
