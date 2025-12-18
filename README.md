@@ -3,7 +3,7 @@
 ![Game Logo](assets/docs/resources/logo.png)
 
 funfact: 
-`Wklv jdph zdv fuhdwhg eb d vwxghqw zlwk d JSD vrphzkhuh lq wkh pbvwhulrxv 2.zz udqjh — qreqrgB lv vxuh li kh'oo judgxdwh ru jhw d mre, exw dw ohdvw kh pdqdjhg wr eulqj wklv olwwoh iduplqj zruog wr olih. Wkdqnv iru wkh mrxuqhb, – klbr`
+`JYQZ KJXU ZKX VYHTQKZ TF B UZJYQWB VYSG R QJD NQGZJYQKZ QD BJL ZKQ QSRHUVLZQX ZL.WW YBEPQ — RNBXFWZB GZ DQHB QZ UK'QQ KJTRBYJZQ RX KTF J DLB, TFX WF JQJZUJZ KJ QFZRB YRJB OQ XZVZ. VYQDLQ WDJ ZKQ NDVFRKB, – SQYZ`
 
 the clue is hiding somewhere in the code find it 
 
