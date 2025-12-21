@@ -9,7 +9,7 @@ import Tile.Render_tiles;
 import UI.Components.ShopUI;
 import UI.TransitionManager;
 import UI.UIContainer;
-import com.sun.tools.javac.Main;
+import audio.MusicPlayer;
 
 import javax.swing.*;
 import java.awt.*;
@@ -41,6 +41,8 @@ public class GamePanel extends JPanel implements Runnable {
 
     public CollisionChecker collisionChecker = new CollisionChecker(this);
     KeyHandler keyH = new KeyHandler();
+    MusicPlayer musicPlayer = new MusicPlayer();
+
     Thread gameThread;
 
     // Initialize tile and crop renderers before the player so item icons
@@ -98,6 +100,8 @@ public class GamePanel extends JPanel implements Runnable {
                         "Sell crops, buy seeds with me."
                 }
         ));
+
+        musicPlayer.playLoop("/resources/audio/soundtrack.wav");
     }
 
     public void update() {
@@ -161,6 +165,8 @@ public class GamePanel extends JPanel implements Runnable {
         int helpWidth = g2.getFontMetrics().stringWidth(demo);
         g2.drawString(demo, (screenWidth - helpWidth) - 20, screenHeight - 10);
         g2.dispose();
+
+        musicPlayer.setVolume(-3f);
     }
 
     //! DON'T TOUCH THIS METHOD or YOU'LL BREAK THE GAME LOOP, I SWEAR PLSSSS DON'T TOUCH IT OR I WILL EXPLODE TO FIX IT AGAIN
