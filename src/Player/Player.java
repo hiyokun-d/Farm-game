@@ -10,6 +10,7 @@ import UI.Components.UIItemSlot;
 import UI.Components.UILabel;
 import UI.TransitionManager;
 import UI.UIComponent;
+import UI.UITheme;
 import fileHandler.Filehandler;
 import fileHandler.ItemData;
 import fileHandler.ItemDatabase;
@@ -610,7 +611,8 @@ public class Player extends Entity {
         g2.setColor(Color.BLUE);
         String DaysGame = "Days: " + days;
         int helpWidth = g2.getFontMetrics().stringWidth(DaysGame);
-        g2.drawString(DaysGame, (gp.screenWidth - helpWidth) - 20, 20);
+        g2.setFont(UITheme.FONT_DEFAULT());
+        g2.drawString(DaysGame, (gp.screenWidth - helpWidth) - 70, 20);
     }
 
     public void draw(Graphics2D g2) {

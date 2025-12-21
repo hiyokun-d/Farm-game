@@ -41,7 +41,7 @@ public class GamePanel extends JPanel implements Runnable {
 
     public CollisionChecker collisionChecker = new CollisionChecker(this);
     KeyHandler keyH = new KeyHandler();
-    MusicPlayer musicPlayer = new MusicPlayer();
+    public MusicPlayer musicPlayer = new MusicPlayer();
 
     Thread gameThread;
 
@@ -112,7 +112,7 @@ public class GamePanel extends JPanel implements Runnable {
         if (inMainMenu) {
             mainMenu.updateMainMenu();
             return;
-        } else if(inCreditMenu) {
+        } else if (inCreditMenu) {
             mainMenu.updateCreditsMenu();
             return;
         }
@@ -136,7 +136,7 @@ public class GamePanel extends JPanel implements Runnable {
             transition.draw(g2, screenWidth, screenHeight);
             g2.dispose();
             return;
-        } else if(inCreditMenu) {
+        } else if (inCreditMenu) {
             mainMenu.drawCreditsMenu(g2);
             transition.draw(g2, screenWidth, screenHeight);
             g2.dispose();
