@@ -83,6 +83,7 @@ java -version
 
 From the project root (where `src` is located):
 
+> sometimes it not work
 ```bash
 # 1. Compile all Java sources into the out/ folder
 mkdir -p out
