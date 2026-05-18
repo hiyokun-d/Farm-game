@@ -45,14 +45,6 @@ public class Entity {
     }
 
     public void updateAnimation(BufferedImage[] frames) {
-        spriteCounter++;
-        if (spriteCounter > frameSpeed) {
-            spriteNum++;
-            if (spriteNum >= frames.length) {
-                spriteNum = 0;
-            }
-
-            spriteCounter = 0;
-        }
+        updateAnimation(frames, true);
     }
 }

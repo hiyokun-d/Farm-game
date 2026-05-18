@@ -35,7 +35,6 @@ public class MusicPlayer {
             clip.start();
 
         } catch (Exception e) {
-            System.out.println("There's an error with the music");
             e.printStackTrace();
         }
     }
