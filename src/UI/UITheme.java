@@ -33,42 +33,26 @@ public class UITheme {
     public static final Color BUTTON_HOVER = new Color(90, 90, 90);
 
     // Fonts
-//    public static final Font FONT_DEFAULT = new Font("Arial", Font.PLAIN, 12);
-    public static final Font FONT_DEFAULT() {
+    private static Font loadFont(String path, float size) {
         try {
-            InputStream is = GamePanel.class.getResourceAsStream("/resources/fonts/Press_Start_2P/PressStart2P-Regular.ttf");
+            InputStream is = GamePanel.class.getResourceAsStream(path);
             Font font = Font.createFont(Font.TRUETYPE_FONT, is);
-            return font.deriveFont(15f);
+            return font.deriveFont(size);
         } catch (IOException | FontFormatException e) {
             e.printStackTrace();
-            System.out.println("Failed to load font. Using default.");
-            return new Font("Arial", Font.PLAIN, (int) 16);
+            return new Font("Arial", Font.PLAIN, 16);
         }
     }
 
-//    public static final Font FONT_SMALL = new Font("Arial", Font.PLAIN, 10);
-    public static final Font FONT_SMALL() {
-        try {
-            InputStream is = GamePanel.class.getResourceAsStream("/resources/fonts/Cormorant_Garamond/CormorantGaramond-VariableFont_wght.ttf");
-            Font font = Font.createFont(Font.TRUETYPE_FONT, is);
-            return font.deriveFont(15f);
-        } catch (IOException | FontFormatException e) {
-            e.printStackTrace();
-            System.out.println("Failed to load font. Using default.");
-            return new Font("Arial", Font.PLAIN, (int) 16);
-        }
+    public static Font FONT_DEFAULT() {
+        return loadFont("/resources/fonts/Press_Start_2P/PressStart2P-Regular.ttf", 15f);
     }
-//    public static final Font FONT_TITLE = new Font("Arial", Font.BOLD, 18);
+
+    public static Font FONT_SMALL() {
+        return loadFont("/resources/fonts/Cormorant_Garamond/CormorantGaramond-VariableFont_wght.ttf", 15f);
+    }
 
     public static Font FONT_TITLE() {
-     try {
-         InputStream is = GamePanel.class.getResourceAsStream("/resources/fonts/Press_Start_2P/PressStart2P-Regular.ttf");
-         Font font = Font.createFont(Font.TRUETYPE_FONT, is);
-         return font.deriveFont(15f);
-     } catch (IOException | FontFormatException e) {
-         e.printStackTrace();
-         System.out.println("Failed to load font. Using default.");
-         return new Font("Arial", Font.PLAIN, (int) 16);
-     }
+        return loadFont("/resources/fonts/Press_Start_2P/PressStart2P-Regular.ttf", 15f);
     }
 }

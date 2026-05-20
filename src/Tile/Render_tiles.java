@@ -265,8 +265,7 @@ public class Render_tiles {
                         worldY - gp.tileSize > gp.player.worldY + gp.player.screenY)
                     continue;
 
-                //! DON'T DO ANYTHING IN THIS YOU'LL BROKE THE LAYER YOU STUPID SHIT MOTHERFUXKER, AM TIRED OF FIXING IT
-                //! regards THIS IS HIYO!!
+                // Layer rendering order matters — changing the order below will break tile layering.
                 drawTile(g2, row, col, screenX, screenY, waterTiles, waterTileNum, true);
                 drawTile(g2, row, col, screenX, screenY, dirtTiles, dirtTileNum);
                 drawTile(g2, row, col, screenX, screenY, lakeTiles, lakeTileNum);

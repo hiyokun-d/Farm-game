@@ -70,8 +70,6 @@ public class CollisionChecker {
 
         if (col < 0 || col >= gp.maxWorldCol || row < 0 || row >= gp.maxWorldRow) return;
 
-        //! JANCOOOOOOOOOOKKKKKKKKKKKKKKKKKKKKK GW PUSING!!!! DEBUGGING MULU KAGAK KELAR KELAR ANJENGGG
-
         int grassIndex = gp.render_tiles.grassTileNum[col][row];
         int dirtIndex = gp.render_tiles.dirtTileNum[col][row];
         int cropsIndex = gp.renderingObjects.cropsTileNum[col][row];

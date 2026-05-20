@@ -13,7 +13,5 @@ public class ItemDatabase {
         return items.get(id);
     }
 
-    public static void save() {
-        // Implement saving logic if needed
-    }
+
 }

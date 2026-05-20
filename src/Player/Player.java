@@ -29,7 +29,6 @@ public class Player extends Entity {
     KeyHandler keyH = new KeyHandler();
     private boolean isMoving = false;
 
-    //    private final BufferedImage[] runFrames = new BufferedImage[4];
     private final BufferedImage[] walkLeft = new BufferedImage[4]; // MAX FRAMES IS 4
     private final BufferedImage[] walkRight = new BufferedImage[4];
     private final BufferedImage[] walkUp = new BufferedImage[4];
@@ -54,8 +53,6 @@ public class Player extends Entity {
     public String interactionHint = "";
     public int days = 0; // the days of the players been playing
 
-//    public Item equippedItem = null;
-
     public Player(GamePanel gp, KeyHandler keyH) throws IOException {
         super(gp);
         this.keyH = keyH;
@@ -63,16 +60,12 @@ public class Player extends Entity {
         this.screenX = gp.screenWidth / 2 - (gp.tileSize / 2);
         this.screenY = gp.screenHeight / 2 - (gp.tileSize / 2);
 
-//        solidArea = new Rectangle(, 15, 28, 32);
         solidArea = new Rectangle(0, 0, 15, 15);
         setDefaultValues();
         getPlayerImage();
     }
 
     public void setDefaultValues() throws IOException {
-//        this.worldX = Filehandler.getInt("playerX");
-//        this.worldY = Filehandler.getInt("playerY");
-
         this.worldX = gp.tileSize * 41; // col 5
         this.worldY = gp.tileSize * 22; // row 7
 
@@ -89,10 +82,6 @@ public class Player extends Entity {
 
         addToInventory("HOE");
         addToInventory("WATERING_CAN");
-//        addToInventory("WHEAT");
-//        addToInventory("WHEAT_SEED", 5);
-//        addToInventory("POTATO_SEED", 5);
-//        addToInventory("POTATO", 10);
         equipStarterTools();
     }
 
@@ -210,7 +199,6 @@ public class Player extends Entity {
                     i.quantity++;
                 updateHotbarForItem(i);
 
-                System.out.println("Added " + itemID + " to inventory. qty: " + i.quantity);
                 //TODO: SAVE HERE
                 return;
             }
@@ -224,7 +212,6 @@ public class Player extends Entity {
                     i.quantity++;
                 updateHotbarForItem(i);
 
-                System.out.println("Added " + itemID + " to inventory. qty: " + i.quantity);
                 //TODO: SAVE HERE
                 return;
             }
@@ -247,7 +234,6 @@ public class Player extends Entity {
             }
         }
 
-        System.out.println("Added " + itemID + " to inventory.");
         updateHotbarForItem(newItem);
         inventory.add(newItem);
     }
@@ -258,10 +244,6 @@ public class Player extends Entity {
 
         for (Item i : inventory) {
             if (slotIndex >= 10) break;
-            System.out.println(i.itemID + " added to hotbar." + " x" + i.quantity);
-            if ("SEED".equals(i.data.type))
-                System.out.println(i.data.plantId);
-
             hotbar.set(slotIndex, i);
             slotIndex++;
         }
@@ -283,17 +265,10 @@ public class Player extends Entity {
             }
         }
 
-        System.out.println("Hotbar full. Cannot add " + item.itemID);
     }
 
-    // TODO: CHANGE THIS LATER PLSSSSS!!!!
-    // implement UI to this
+    // TODO: implement proper inventory UI
     public void showInventory() {
-        System.out.println("----- INVENTORY -----");
-        for (Item i : inventory) {
-            System.out.println(i.itemID + " x" + i.quantity);
-        }
-        System.out.println("---------------------");
     }
 
     public void inventoryKeys() {

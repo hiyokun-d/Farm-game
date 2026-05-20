@@ -47,11 +47,9 @@ public class UIButton extends UIComponent {
 
     @Override
     public void onClick() {
-        System.out.println("Button '" + label + "' clicked!");
     }
 
     @Override
     public void onHover() {
-        System.out.println("Button '" + label + "' hovered!");
     }
 }

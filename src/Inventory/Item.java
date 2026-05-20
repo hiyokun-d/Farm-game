@@ -14,7 +14,7 @@ public class Item {
     public ItemData data;
 
     // OPTIONAL: for future UI
-    public BufferedImage icon; //! YOU STUPID SHIT DON'T CHANGE THE NAME OF THIS
+    public BufferedImage icon; // Field name is referenced by the UI renderer — do not rename.
     public BufferedImage altIcon;
 
     public Item(ItemData data) {
